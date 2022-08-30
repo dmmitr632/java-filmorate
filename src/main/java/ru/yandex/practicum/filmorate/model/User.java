@@ -4,17 +4,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 
 @Data
 @Builder
 public class User {
-    @NonNull
+    @NotNull
     int id;
+    @NotNull @NotBlank @Email
     String email;
-    @NonNull
+    @NotNull
     String name;
-    @NonNull
+    @NotNull
     Date birthday;
 }

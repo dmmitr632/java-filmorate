@@ -4,17 +4,22 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.util.Date;
 
 @Data
 @Builder
 public class Film {
-    @NonNull
+    @NotNull
     private int id;
-    @NonNull
+    @NotNull @NotBlank
     String name;
+    @NotNull @NotBlank
     String description;
+    @NotNull
     Date releaseDate;
+    @NotNull
     Duration duration;
 }
