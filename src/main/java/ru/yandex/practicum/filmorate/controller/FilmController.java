@@ -13,17 +13,14 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
-
 import java.util.List;
-
 
 @Slf4j
 @RestController
 public class FilmController {
-
     private final List<Film> films = new ArrayList<>();
 
-    @PostMapping("/film/add")
+    @PostMapping("/films")
     public Film addFilm(@Valid @RequestBody Film film)
             throws InvalidNameException, InvalidDurationException, InvalidDescriptionException,
             InvalidReleaseDateException {
@@ -33,15 +30,15 @@ public class FilmController {
         return film;
     }
 
-    @PutMapping(value = "/film/edit")
+    @PutMapping(value = "/films")
     public Film create(@Valid @RequestBody Film film)
             throws InvalidNameException, InvalidDurationException, InvalidDescriptionException,
             InvalidReleaseDateException {
         checkFilm(film);
-        for (Film filmEdited: films) {
-            if (filmEdited.getId() == film.getId())
+        for (Film filmEdited : films) {
+            if (filmEdited.getId() == film.getId()) {
                 films.remove(filmEdited);
-
+            }
         }
         log.info(film.toString());
         films.add(film);
@@ -53,7 +50,6 @@ public class FilmController {
         log.info(films.toString());
         return films;
     }
-
 
     public void checkFilm(Film film)
             throws InvalidNameException, InvalidDescriptionException, InvalidReleaseDateException,
@@ -75,5 +71,4 @@ public class FilmController {
             throw new InvalidDurationException();
         }
     }
-
 }
