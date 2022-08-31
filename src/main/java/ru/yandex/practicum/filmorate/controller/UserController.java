@@ -3,12 +3,14 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.user.InvalidBirthdayException;
-import ru.yandex.practicum.filmorate.exceptions.user.InvalidIdofEditedUserException;
+import ru.yandex.practicum.filmorate.exceptions.user.InvalidIdOfEditedUserException;
 import ru.yandex.practicum.filmorate.exceptions.user.InvalidLoginException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -20,7 +22,7 @@ public class UserController {
     public User adduser(@RequestBody User user) throws InvalidLoginException, InvalidBirthdayException {
         log.info(user.toString());
         checkUser(user);
-        for (User otherUser: users) {
+        for (User otherUser : users) {
             if (otherUser.getId() == user.getId()) {
                 return null;
             }
@@ -34,17 +36,18 @@ public class UserController {
 
     @PutMapping(value = "/users")
     public User create(@RequestBody User user)
-            throws InvalidLoginException, InvalidBirthdayException, InvalidIdofEditedUserException {
+            throws InvalidLoginException, InvalidBirthdayException, InvalidIdOfEditedUserException {
         log.info(user.toString());
         checkUser(user);
         for (User userEdited : users) {
             if (userEdited.getId() == user.getId()) {
                 users.remove(userEdited);
                 users.add(user);
+                log.info(user.toString());
                 return user;
             }
         }
-        throw new InvalidIdofEditedUserException();
+        throw new InvalidIdOfEditedUserException();
     }
 
     @GetMapping(value = "/users")
@@ -74,9 +77,5 @@ public class UserController {
     public int generateId() {
         this.id++;
         return this.id;
-    }
-
-    public Integer getId() {
-        return id;
     }
 }

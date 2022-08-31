@@ -2,16 +2,13 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.film.InvalidDescriptionException;
-import ru.yandex.practicum.filmorate.exceptions.film.InvalidDurationException;
-import ru.yandex.practicum.filmorate.exceptions.film.InvalidNameException;
-import ru.yandex.practicum.filmorate.exceptions.film.InvalidReleaseDateException;
+import ru.yandex.practicum.filmorate.exceptions.film.*;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
-import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.Month;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,30 +16,42 @@ import java.util.List;
 @RestController
 public class FilmController {
     private final List<Film> films = new ArrayList<>();
+    private int id;
 
     @PostMapping("/films")
     public Film addFilm(@Valid @RequestBody Film film)
             throws InvalidNameException, InvalidDurationException, InvalidDescriptionException,
             InvalidReleaseDateException {
+
         checkFilm(film);
-        films.add(film);
         log.info(film.toString());
+        for (Film otherFilm : films) {
+            if (otherFilm.getId() == film.getId()) {
+                return null;
+            }
+        }
+        if (film.getId() == 0) {
+            film.setId(generateId());
+        }
+        films.add(film);
+
         return film;
     }
 
     @PutMapping(value = "/films")
     public Film create(@Valid @RequestBody Film film)
             throws InvalidNameException, InvalidDurationException, InvalidDescriptionException,
-            InvalidReleaseDateException {
+            InvalidReleaseDateException, InvalidIdOfEditedFilmException {
         checkFilm(film);
         for (Film filmEdited : films) {
             if (filmEdited.getId() == film.getId()) {
                 films.remove(filmEdited);
+                films.add(film);
+                log.info(film.toString());
+                return film;
             }
         }
-        log.info(film.toString());
-        films.add(film);
-        return film;
+        throw new InvalidIdOfEditedFilmException();
     }
 
     @GetMapping(value = "/films")
@@ -62,13 +71,19 @@ public class FilmController {
             throw new InvalidDescriptionException();
         }
 
-        LocalDateTime dateTime = LocalDateTime.of(1895, Month.DECEMBER, 28, 0, 0);
-        if (film.getReleaseDate().toInstant().isBefore(Instant.from(dateTime))) {
+        LocalDate dateTime = LocalDate.of(1895, Month.DECEMBER, 28);
+
+        if (film.getReleaseDate().toInstant().isBefore(dateTime.atStartOfDay(ZoneId.systemDefault()).toInstant())) {
             throw new InvalidReleaseDateException();
         }
 
-        if (film.getDuration().isNegative()) {
+        if (film.getDuration() < 0) {
             throw new InvalidDurationException();
         }
+    }
+
+    public int generateId() {
+        this.id++;
+        return this.id;
     }
 }

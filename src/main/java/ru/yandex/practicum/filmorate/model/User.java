@@ -13,9 +13,12 @@ import java.util.Date;
 @Data
 @Builder
 public class User {
-    @Positive private int id;
+    @Positive
+    private int id;
     @NotNull @NotBlank @Email String email;
     @NotNull @NotBlank String login;
     String name;
-    @NotNull @JsonFormat(pattern="yyyy-MM-dd") Date birthday;
+    @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    Date birthday;
 }
