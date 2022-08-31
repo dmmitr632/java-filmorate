@@ -6,13 +6,11 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import java.util.Date;
 
 @Data
 @Builder
 public class Film {
-    @Positive
     private int id;
     @NotNull @NotBlank String name;
     @NotNull @NotBlank String description;
