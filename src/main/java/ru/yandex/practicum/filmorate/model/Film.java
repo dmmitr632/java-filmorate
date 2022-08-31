@@ -12,7 +12,6 @@ import java.util.Date;
 @Data
 @Builder
 public class Film {
-    @NotNull
     private int id;
     @NotNull @NotBlank String name;
     @NotNull @NotBlank String description;
