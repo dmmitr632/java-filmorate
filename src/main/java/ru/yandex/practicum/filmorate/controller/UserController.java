@@ -3,54 +3,54 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.user.InvalidBirthdayException;
+import ru.yandex.practicum.filmorate.exceptions.user.InvalidIdofEditedUserException;
 import ru.yandex.practicum.filmorate.exceptions.user.InvalidLoginException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @RestController
 public class UserController {
-    private final Map<Integer, User> users = new HashMap<>();
+    private final List<User> users = new ArrayList<>();
     private int id;
 
     @PostMapping("/users")
     public User adduser(@RequestBody User user) throws InvalidLoginException, InvalidBirthdayException {
         log.info(user.toString());
         checkUser(user);
-        for (Integer otherUserId : users.keySet()) {
-            if (otherUserId == user.getId()) {
+        for (User otherUser: users) {
+            if (otherUser.getId() == user.getId()) {
                 return null;
             }
         }
         if (user.getId() == 0) {
             user.setId(generateId());
         }
-        users.put(user.getId(), user);
+        users.add(user);
         return user;
     }
 
     @PutMapping(value = "/users")
-    public User create(@RequestBody User user) throws InvalidLoginException, InvalidBirthdayException {
+    public User create(@RequestBody User user)
+            throws InvalidLoginException, InvalidBirthdayException, InvalidIdofEditedUserException {
         log.info(user.toString());
         checkUser(user);
-        for (Integer userEditedId : users.keySet()) {
-            if (users.get(userEditedId).getId() == user.getId()) {
-                users.replace(userEditedId, user);
+        for (User userEdited : users) {
+            if (userEdited.getId() == user.getId()) {
+                users.remove(userEdited);
+                users.add(user);
                 return user;
             }
         }
-        return null;
+        throw new InvalidIdofEditedUserException();
     }
 
     @GetMapping(value = "/users")
     public List<User> viewAllUsers() {
         log.info(users.toString());
-        return (List<User>) users.values();
+        return users;
     }
 
     public void checkUser(User user) throws InvalidLoginException, InvalidBirthdayException {
