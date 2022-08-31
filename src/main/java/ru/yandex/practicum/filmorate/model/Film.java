@@ -6,6 +6,7 @@ import lombok.NonNull;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.time.Duration;
 import java.util.Date;
 
@@ -20,6 +21,6 @@ public class Film {
     String description;
     @NotNull
     Date releaseDate;
-    @NotNull
+    @NotNull @Positive
     Duration duration;
 }
