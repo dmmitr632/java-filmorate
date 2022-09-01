@@ -66,10 +66,12 @@ public class FilmController {
 
     public void validateFilm(Film film) {
         if (film.getName().equals("")) {
-            throw new InvalidNameException();
+            log.info("Empty film name {}", film.getName());
+            throw new InvalidNameException("film lacks name");
         }
 
         if (film.getDescription().length() > 200) {
+            log.info("Too long film description {}", film.getDescription().length());
             throw new InvalidDescriptionException();
         }
 
@@ -77,11 +79,11 @@ public class FilmController {
 
         if (film.getReleaseDate().atStartOfDay(ZoneId.systemDefault()).toInstant()
                 .isBefore(CINEMA_BIRTHDAY.atStartOfDay(ZoneId.systemDefault()).toInstant())) {
-            throw new InvalidReleaseDateException();
+            throw new InvalidReleaseDateException("Film releaseDate before 1895-12-28");
         }
 
         if (film.getDuration() < 0) {
-            throw new InvalidDurationException();
+            throw new InvalidDurationException("duration must be positive");
         }
     }
 

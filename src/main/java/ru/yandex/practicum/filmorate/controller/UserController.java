@@ -63,17 +63,17 @@ public class UserController {
             throw new InvalidIdOfUserException();
         }
         if (user.getLogin().contains(" ") || Objects.equals(user.getLogin(), "")) {
-            System.out.println("Wrong login");
+            log.info("Wrong login {}", user.getLogin());
             throw new InvalidLoginException("login contains spaces");
         }
 
         if (user.getName() == null || Objects.equals(user.getName(), " ") || Objects.equals(user.getName(), "")) {
-            System.out.println("Setting login as name");
             user.setName(user.getLogin());
+            log.info("Setting name to login {}", user.getLogin());
         }
 
         if (user.getBirthday().atStartOfDay(ZoneId.systemDefault()).toInstant().isAfter(Instant.now())) {
-            System.out.println("Wrong birthday date");
+            log.info("Wrong birthday date {}", user.getBirthday());
             throw new InvalidBirthdayException("Birthday in the future");
         }
     }
