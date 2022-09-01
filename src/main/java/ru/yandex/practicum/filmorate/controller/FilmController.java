@@ -73,7 +73,8 @@ public class FilmController {
 
         LocalDate dateTime = LocalDate.of(1895, Month.DECEMBER, 28);
 
-        if (film.getReleaseDate().toInstant().isBefore(dateTime.atStartOfDay(ZoneId.systemDefault()).toInstant())) {
+        if (film.getReleaseDate().atStartOfDay(ZoneId.systemDefault()).toInstant()
+                .isBefore(dateTime.atStartOfDay(ZoneId.systemDefault()).toInstant())) {
             throw new InvalidReleaseDateException();
         }
 

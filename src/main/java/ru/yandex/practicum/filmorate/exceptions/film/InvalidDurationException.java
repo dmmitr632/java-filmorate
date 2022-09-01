@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.exceptions.film;
 
-public class InvalidDurationException extends Throwable {
+import javax.validation.ValidationException;
+
+public class InvalidDurationException extends ValidationException {
     public InvalidDurationException(String message) {
         super(message);
     }

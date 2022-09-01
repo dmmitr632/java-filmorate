@@ -8,7 +8,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -20,5 +20,5 @@ public class User {
     String name;
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd")
-    Date birthday;
+    LocalDate birthday;
 }

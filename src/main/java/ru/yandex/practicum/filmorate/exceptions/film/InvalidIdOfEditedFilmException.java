@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.exceptions.film;
 
-public class InvalidIdOfEditedFilmException extends Throwable {
+import javax.validation.ValidationException;
+
+public class InvalidIdOfEditedFilmException extends ValidationException {
     public InvalidIdOfEditedFilmException(String message) {
         super(message);
     }

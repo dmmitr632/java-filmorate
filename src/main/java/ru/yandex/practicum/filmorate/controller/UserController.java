@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exceptions.user.InvalidLoginException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -68,7 +69,7 @@ public class UserController {
             user.setName(user.getLogin());
         }
 
-        if (user.getBirthday().toInstant().isAfter(Instant.now())) {
+        if (user.getBirthday().atStartOfDay(ZoneId.systemDefault()).toInstant().isAfter(Instant.now())) {
             System.out.println("Wrong birthday date");
             throw new InvalidBirthdayException("Birthday in the future");
         }

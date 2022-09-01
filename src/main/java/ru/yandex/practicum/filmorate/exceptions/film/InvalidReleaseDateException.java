@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.exceptions.film;
 
-public class InvalidReleaseDateException extends Throwable {
+import javax.validation.ValidationException;
+
+public class InvalidReleaseDateException extends ValidationException {
     public InvalidReleaseDateException(String message) {
         super(message);
     }

@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.exceptions.film;
 
-public class InvalidDescriptionException extends Throwable {
+import javax.validation.ValidationException;
+
+public class InvalidDescriptionException extends ValidationException {
     public InvalidDescriptionException(String message) {
         super(message);
     }

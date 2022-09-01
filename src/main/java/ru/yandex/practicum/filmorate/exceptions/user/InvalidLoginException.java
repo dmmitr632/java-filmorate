@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.exceptions.user;
 
-public class InvalidLoginException extends Throwable {
+import javax.validation.ValidationException;
+
+public class InvalidLoginException extends ValidationException {
     public InvalidLoginException(String message) {
         super(message);
     }
