@@ -11,12 +11,12 @@ import java.time.LocalDate;
 @Data
 public class Film {
     private int id;
-    @NotBlank @NotEmpty String name;
-    @NotBlank @NotEmpty String description;
+    @NotBlank @NotEmpty private String name;
+    @NotBlank @NotEmpty private String description;
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd")
-    LocalDate releaseDate;
-    @NotNull int duration;
+    private LocalDate releaseDate;
+    @NotNull private int duration;
 
     public Film(int id, String name, String description, LocalDate releaseDate, int duration) {
         this.id = id;

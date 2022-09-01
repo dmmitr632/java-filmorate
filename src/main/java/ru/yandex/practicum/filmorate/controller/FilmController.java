@@ -16,15 +16,19 @@ import java.util.List;
 @Slf4j
 @Validated
 @RestController
+@RequestMapping("films")
 public class FilmController {
+
+    private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, Month.DECEMBER, 28);
     private final List<Film> films = new ArrayList<>();
     private int id;
 
-    @PostMapping("/films")
+    @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
+        log.info("Trying to add Film with id {}, film.toString {} ", film.getId(), film);
+        validateFilm(film);
 
-        checkFilm(film);
-        log.info(film.toString());
+
         for (Film otherFilm : films) {
             if (otherFilm.getId() == film.getId()) {
                 return null;
@@ -34,31 +38,32 @@ public class FilmController {
             film.setId(generateId());
         }
         films.add(film);
-
+        log.info("Added Film with id {}, film.toString {} ", film.getId(), film);
         return film;
     }
 
-    @PutMapping(value = "/films")
-    public Film create(@Valid @RequestBody Film film) {
-        checkFilm(film);
+    @PutMapping
+    public Film editFilm(@Valid @RequestBody Film film) {
+        log.info("Trying to edit Film with id {}, film.toString {} ", film.getId(), film);
+        validateFilm(film);
         for (Film filmEdited : films) {
             if (filmEdited.getId() == film.getId()) {
                 films.remove(filmEdited);
                 films.add(film);
-                log.info(film.toString());
+                log.info("Edited Film with id {}, film.toString {} ", film.getId(), film);
                 return film;
             }
         }
         throw new InvalidIdOfEditedFilmException();
     }
 
-    @GetMapping(value = "/films")
+    @GetMapping
     public List<Film> viewAllFilms() {
-        log.info(films.toString());
+        log.info("All films, {}", films);
         return films;
     }
 
-    public void checkFilm(Film film) {
+    public void validateFilm(Film film) {
         if (film.getName().equals("")) {
             throw new InvalidNameException();
         }
@@ -67,10 +72,10 @@ public class FilmController {
             throw new InvalidDescriptionException();
         }
 
-        LocalDate dateTime = LocalDate.of(1895, Month.DECEMBER, 28);
+
 
         if (film.getReleaseDate().atStartOfDay(ZoneId.systemDefault()).toInstant()
-                .isBefore(dateTime.atStartOfDay(ZoneId.systemDefault()).toInstant())) {
+                .isBefore(CINEMA_BIRTHDAY.atStartOfDay(ZoneId.systemDefault()).toInstant())) {
             throw new InvalidReleaseDateException();
         }
 

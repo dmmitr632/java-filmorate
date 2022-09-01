@@ -18,14 +18,15 @@ import java.util.Objects;
 @Slf4j
 @Validated
 @RestController
+@RequestMapping("films")
 public class UserController {
     private final List<User> users = new ArrayList<>();
     private int id;
 
-    @PostMapping("/users")
+    @PostMapping
     public User addUser(@Valid @RequestBody User user) {
-        log.info(user.toString());
-        checkUser(user);
+        log.info("Trying to add User with id {}, user.toString {} ", user.getId(), user);
+        validateUser(user);
         for (User otherUser : users) {
             if (otherUser.getId() == user.getId()) {
                 throw new InvalidIdOfUserException();
@@ -35,31 +36,32 @@ public class UserController {
             user.setId(generateId());
         }
         users.add(user);
+        log.info("Added User with id {}, user.toString {} ", user.getId(), user);
         return user;
     }
 
-    @PutMapping(value = "/users")
+    @PutMapping
     public User editUser(@Valid @RequestBody User user) {
-        log.info(user.toString());
-        checkUser(user);
+        log.info("Trying to edit User with id {}, user.toString {} ", user.getId(), user);
+        validateUser(user);
         for (User userEdited : users) {
             if (userEdited.getId() == user.getId()) {
                 users.remove(userEdited);
                 users.add(user);
-                log.info(user.toString());
+                log.info("Edited User with id {}, user.toString {} ", user.getId(), user);
                 return user;
             }
         }
         throw new InvalidIdOfUserException();
     }
 
-    @GetMapping(value = "/users")
+    @GetMapping
     public List<User> viewAllUsers() {
-        log.info(users.toString());
+        log.info("All users {} ", users);
         return users;
     }
 
-    public void checkUser(User user) {
+    public void validateUser(User user) {
         if (user.getId() < 0) {
             throw new InvalidIdOfUserException();
         }

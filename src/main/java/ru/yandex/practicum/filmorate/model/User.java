@@ -12,12 +12,12 @@ import java.time.LocalDate;
 @Data
 public class User {
     private int id;
-    @NotBlank(message = "blank email") @NotEmpty(message = "empty email") @Email(message = "wrong email") String email;
-    @NotBlank @NotEmpty String login;
-    String name;
+    @NotBlank(message = "blank email") @NotEmpty(message = "empty email") @Email(message = "wrong email") private String email;
+    @NotBlank @NotEmpty private String login;
+    private String name;
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd")
-    LocalDate birthday;
+    private LocalDate birthday;
 
     public User(int id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
