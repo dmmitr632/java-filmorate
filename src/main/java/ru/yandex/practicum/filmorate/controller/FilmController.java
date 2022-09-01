@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +61,7 @@ public class FilmController {
     @GetMapping
     public List<Film> viewAllFilms() {
         log.info("All films, {}", films);
-        return (List<Film>) films.values();
+        return new ArrayList<>(films.values());
     }
 
     public void validateFilm(Film film) {

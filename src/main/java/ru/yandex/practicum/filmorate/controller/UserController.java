@@ -55,7 +55,7 @@ public class UserController {
     @GetMapping
     public List<User> viewAllUsers() {
         log.info("All users {} ", users);
-        return (List<User>) users.values();
+        return new ArrayList<>(users.values());
     }
 
     public void validateUser(User user) {
