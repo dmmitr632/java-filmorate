@@ -6,7 +6,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.exceptions.user.InvalidIdOfUserException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.ValidationException;
 import java.time.LocalDate;
@@ -22,14 +24,16 @@ class FilmorateApplicationTests extends UserController {
     }
 
     @Test
-    public void putFilmWithEmptyName() {
-        Film film = new Film(1, "", "description 1", LocalDate.of(2000, 1, 1), 100);
+    public void addFilmWithEmptyName() {
+        Film film = new Film(1, "", "description 1", LocalDate.of(2000, 1, 1), 60);
         assertThrows(ValidationException.class, () -> new FilmController().addFilm(film));
     }
 
-    //    @Test
-    //    public void putUserWithEmptyName() {
-    //        Film film = new Film(1, "", "description 1", LocalDate.of(2000, 1, 1), 100);
-    //        assertThrows(ValidationException.class,() -> new FilmController().addFilm(film));
-    //    }
+    @Test
+    public void addUserWithWrongId() {
+        User user = new User(-10, "aaa@gmail.com", "A", "", LocalDate.of(2000, 1, 1));
+        assertThrows(InvalidIdOfUserException.class, () -> new UserController().addUser(user));
+    }
+
+
 }

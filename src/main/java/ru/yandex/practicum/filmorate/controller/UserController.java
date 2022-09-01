@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.user.InvalidBirthdayException;
-import ru.yandex.practicum.filmorate.exceptions.user.InvalidIdOfEditedUserException;
+import ru.yandex.practicum.filmorate.exceptions.user.InvalidIdOfUserException;
 import ru.yandex.practicum.filmorate.exceptions.user.InvalidLoginException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -20,7 +20,7 @@ public class UserController {
     private int id;
 
     @PostMapping("/users")
-    public User adduser(@RequestBody User user) throws InvalidLoginException, InvalidBirthdayException {
+    public User addUser(@RequestBody User user) {
         log.info(user.toString());
         checkUser(user);
         for (User otherUser : users) {
@@ -31,13 +31,15 @@ public class UserController {
         if (user.getId() == 0) {
             user.setId(generateId());
         }
+        if (user.getId() < 0) {
+            throw new InvalidIdOfUserException();
+        }
         users.add(user);
         return user;
     }
 
     @PutMapping(value = "/users")
-    public User create(@RequestBody User user)
-            throws InvalidLoginException, InvalidBirthdayException, InvalidIdOfEditedUserException {
+    public User create(@RequestBody User user) {
         log.info(user.toString());
         checkUser(user);
         for (User userEdited : users) {
@@ -48,7 +50,7 @@ public class UserController {
                 return user;
             }
         }
-        throw new InvalidIdOfEditedUserException();
+        throw new InvalidIdOfUserException();
     }
 
     @GetMapping(value = "/users")
@@ -57,7 +59,7 @@ public class UserController {
         return users;
     }
 
-    public void checkUser(User user) throws InvalidLoginException, InvalidBirthdayException {
+    public void checkUser(User user) {
 
         if (user.getLogin().contains(" ")) {
             System.out.println("Wrong login");
