@@ -10,8 +10,9 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.ZoneId;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Validated
@@ -20,7 +21,7 @@ import java.util.List;
 public class FilmController {
 
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, Month.DECEMBER, 28);
-    private final List<Film> films = new ArrayList<>();
+    private final Map<Integer,Film> films = new HashMap<>();
     private int id;
 
     @PostMapping
@@ -29,15 +30,15 @@ public class FilmController {
         validateFilm(film);
 
 
-        for (Film otherFilm : films) {
+        for (Film otherFilm : films.values()) {
             if (otherFilm.getId() == film.getId()) {
-                return null;
+                throw new InvalidIdOfFilmException();
             }
         }
         if (film.getId() == 0) {
             film.setId(generateId());
         }
-        films.add(film);
+        films.put(film.getId(), film);
         log.info("Added Film with id {}, film.toString {} ", film.getId(), film);
         return film;
     }
@@ -46,21 +47,20 @@ public class FilmController {
     public Film editFilm(@Valid @RequestBody Film film) {
         log.info("Trying to edit Film with id {}, film.toString {} ", film.getId(), film);
         validateFilm(film);
-        for (Film filmEdited : films) {
+        for (Film filmEdited : films.values()) {
             if (filmEdited.getId() == film.getId()) {
-                films.remove(filmEdited);
-                films.add(film);
+                films.replace(film.getId(), film);
                 log.info("Edited Film with id {}, film.toString {} ", film.getId(), film);
                 return film;
             }
         }
-        throw new InvalidIdOfEditedFilmException();
+        throw new InvalidIdOfFilmException();
     }
 
     @GetMapping
     public List<Film> viewAllFilms() {
         log.info("All films, {}", films);
-        return films;
+        return (List<Film>) films.values();
     }
 
     public void validateFilm(Film film) {

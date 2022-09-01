@@ -11,23 +11,21 @@ import ru.yandex.practicum.filmorate.model.User;
 import javax.validation.Valid;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Validated
 @RestController
 @RequestMapping("films")
 public class UserController {
-    private final List<User> users = new ArrayList<>();
+    private final Map<Integer,User> users = new HashMap<>();
     private int id;
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
         log.info("Trying to add User with id {}, user.toString {} ", user.getId(), user);
         validateUser(user);
-        for (User otherUser : users) {
+        for (User otherUser : users.values()) {
             if (otherUser.getId() == user.getId()) {
                 throw new InvalidIdOfUserException();
             }
@@ -35,7 +33,7 @@ public class UserController {
         if (user.getId() == 0) {
             user.setId(generateId());
         }
-        users.add(user);
+        users.put(user.getId(), user);
         log.info("Added User with id {}, user.toString {} ", user.getId(), user);
         return user;
     }
@@ -44,10 +42,9 @@ public class UserController {
     public User editUser(@Valid @RequestBody User user) {
         log.info("Trying to edit User with id {}, user.toString {} ", user.getId(), user);
         validateUser(user);
-        for (User userEdited : users) {
+        for (User userEdited : users.values()) {
             if (userEdited.getId() == user.getId()) {
-                users.remove(userEdited);
-                users.add(user);
+                users.replace(userEdited.getId(), user);
                 log.info("Edited User with id {}, user.toString {} ", user.getId(), user);
                 return user;
             }
@@ -58,7 +55,7 @@ public class UserController {
     @GetMapping
     public List<User> viewAllUsers() {
         log.info("All users {} ", users);
-        return users;
+        return (List<User>) users.values();
     }
 
     public void validateUser(User user) {
