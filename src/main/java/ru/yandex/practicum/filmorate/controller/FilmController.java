@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.film.*;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -13,15 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@Validated
 @RestController
 public class FilmController {
     private final List<Film> films = new ArrayList<>();
     private int id;
 
     @PostMapping("/films")
-    public Film addFilm(@Valid @RequestBody Film film)
-            throws InvalidNameException, InvalidDurationException, InvalidDescriptionException,
-            InvalidReleaseDateException {
+    public Film addFilm(@Valid @RequestBody Film film) {
 
         checkFilm(film);
         log.info(film.toString());
@@ -39,9 +39,7 @@ public class FilmController {
     }
 
     @PutMapping(value = "/films")
-    public Film create(@Valid @RequestBody Film film)
-            throws InvalidNameException, InvalidDurationException, InvalidDescriptionException,
-            InvalidReleaseDateException, InvalidIdOfEditedFilmException {
+    public Film create(@Valid @RequestBody Film film) {
         checkFilm(film);
         for (Film filmEdited : films) {
             if (filmEdited.getId() == film.getId()) {
@@ -60,9 +58,7 @@ public class FilmController {
         return films;
     }
 
-    public void checkFilm(Film film)
-            throws InvalidNameException, InvalidDescriptionException, InvalidReleaseDateException,
-            InvalidDurationException {
+    public void checkFilm(Film film) {
         if (film.getName().equals("")) {
             throw new InvalidNameException();
         }
