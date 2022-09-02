@@ -18,7 +18,7 @@ import java.util.*;
 @RestController
 @RequestMapping("users")
 public class UserController {
-    private final Map<Integer,User> users = new HashMap<>();
+    private final Map<Integer, User> users = new HashMap<>();
     private int id;
 
     @PostMapping

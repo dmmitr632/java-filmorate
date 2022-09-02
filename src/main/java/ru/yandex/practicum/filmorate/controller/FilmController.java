@@ -3,7 +3,10 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.film.*;
+import ru.yandex.practicum.filmorate.exceptions.film.InvalidDescriptionException;
+import ru.yandex.practicum.filmorate.exceptions.film.InvalidIdOfFilmException;
+import ru.yandex.practicum.filmorate.exceptions.film.InvalidNameException;
+import ru.yandex.practicum.filmorate.exceptions.film.InvalidReleaseDateException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
@@ -20,16 +23,14 @@ import java.util.Map;
 @RestController
 @RequestMapping("films")
 public class FilmController {
-
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, Month.DECEMBER, 28);
-    private final Map<Integer,Film> films = new HashMap<>();
+    private final Map<Integer, Film> films = new HashMap<>();
     private int id;
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
         log.info("Trying to add Film with id {}, film.toString {} ", film.getId(), film);
         validateFilm(film);
-
 
         for (Film otherFilm : films.values()) {
             if (otherFilm.getId() == film.getId()) {
@@ -71,19 +72,14 @@ public class FilmController {
         }
 
         if (film.getDescription().length() > 200) {
-            log.info("Too long film description {}", film.getDescription().length());
-            throw new InvalidDescriptionException();
+            log.info("Too long film description, {} chars", film.getDescription().length());
+            throw new InvalidDescriptionException("too long film description");
         }
-
-
 
         if (film.getReleaseDate().atStartOfDay(ZoneId.systemDefault()).toInstant()
                 .isBefore(CINEMA_BIRTHDAY.atStartOfDay(ZoneId.systemDefault()).toInstant())) {
+            log.info("Wrong film date (before 1895-12-28) {}", film.getReleaseDate());
             throw new InvalidReleaseDateException("Film releaseDate before 1895-12-28");
-        }
-
-        if (film.getDuration() < 0) {
-            throw new InvalidDurationException("duration must be positive");
         }
     }
 
