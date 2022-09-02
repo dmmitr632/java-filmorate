@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,8 +75,7 @@ public class FilmController {
             throw new InvalidDescriptionException("too long film description");
         }
 
-        if (film.getReleaseDate().atStartOfDay(ZoneId.systemDefault()).toInstant()
-                .isBefore(CINEMA_BIRTHDAY.atStartOfDay(ZoneId.systemDefault()).toInstant())) {
+        if (film.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
             log.info("Wrong film date (before 1895-12-28) {}", film.getReleaseDate());
             throw new InvalidReleaseDateException("Film releaseDate before 1895-12-28");
         }
