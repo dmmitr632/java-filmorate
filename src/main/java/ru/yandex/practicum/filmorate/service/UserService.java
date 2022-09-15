@@ -3,21 +3,30 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class UserService {
     //добавление в друзья, удаление из друзей, вывод списка общих друзей.
-    public User addToFriends(User user) {
-        return user;
+    public void addToFriends(User user1, User user2) {
+        user1.addUsersInFriends(user2.getId());
+        user2.addUsersInFriends(user1.getId());
     }
 
-    public User removeFromFriends(User user) {
-        return user;
+    public void removeFromFriends(User user1, User user2) {
+        user1.removeUsersInFriends(user2.getId());
+        user2.removeUsersInFriends(user1.getId());
     }
 
-    public List<User> viewMutualFriends(User user) {
-        return Arrays.asList(user);
+    public Set<Integer> viewCommonFriends(User user1, User user2) {
+
+        Set<Integer> commonFriendsIds = new HashSet<>();
+        for (Integer friendId : user1.getUsersIdsInFriends()) {
+            if (user2.getUsersIdsInFriends().contains(friendId)) {
+                commonFriendsIds.add(friendId);
+            }
+        }
+        return commonFriendsIds;
     }
 }

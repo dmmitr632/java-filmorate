@@ -13,6 +13,8 @@ public interface FilmStorage {
 
     List<Film> viewAllFilms();
 
+    Film viewFilm(@Valid @RequestBody Film film);
+
     void validateFilm(Film film);
 
     int generateId();

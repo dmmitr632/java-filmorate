@@ -36,11 +36,15 @@ public class Film {
         this.duration = duration;
     }
 
-    public Set<Integer> getUserIdsWhoLikedFilm() {
+    public Set<Integer> getUsersWhoLikedFilm() {
         return userIdsWhoLikedFilm;
     }
 
-    public void setUserIdsWhoLikedFilm(Set<Integer> userIdsWhoLikedFilm) {
-        this.userIdsWhoLikedFilm = userIdsWhoLikedFilm;
+    public void addUsersWhoLikedFilm(int userIdsWhoLikedFilm) {
+        this.userIdsWhoLikedFilm.add(userIdsWhoLikedFilm);
+    }
+
+    public void removeUsersWhoLikedFilm(int userIdsWhoLikedFilm) {
+        this.userIdsWhoLikedFilm.remove(userIdsWhoLikedFilm);
     }
 }

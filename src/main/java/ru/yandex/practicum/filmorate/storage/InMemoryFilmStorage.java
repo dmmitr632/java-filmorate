@@ -35,6 +35,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
+    public Film viewFilm(Film film) {
+        log.info("Films {}", film);
+        return film;
+    }
+
+    @Override
     public Film addFilm(@Valid @RequestBody Film film) {
         log.info("Trying to add Film with id {}, film.toString {} ", film.getId(), film);
         validateFilm(film);

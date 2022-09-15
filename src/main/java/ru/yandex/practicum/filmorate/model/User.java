@@ -23,6 +23,7 @@ public class User {
     private LocalDate birthday;
     @PositiveOrZero
     private Set<Integer> usersIdsInFriends;
+    private Set<Integer> likedFilmIds;
 
     public User(int id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
@@ -36,7 +37,23 @@ public class User {
         return usersIdsInFriends;
     }
 
-    public void setUsersIdsInFriends(Set<Integer> usersIdsInFriends) {
-        this.usersIdsInFriends = usersIdsInFriends;
+    public Set<Integer> getLikedFilmIds() {
+        return likedFilmIds;
+    }
+
+    public void addLikedFilmId(int filmId) {
+        likedFilmIds.add(filmId);
+    }
+
+    public void removeLikedFilmId(int filmId) {
+        likedFilmIds.remove(filmId);
+    }
+
+    public void addUsersInFriends(int userIdsWhoLikedFilm) {
+        this.usersIdsInFriends.add(userIdsWhoLikedFilm);
+    }
+
+    public void removeUsersInFriends(int userIdsWhoLikedFilm) {
+        this.usersIdsInFriends.remove(userIdsWhoLikedFilm);
     }
 }
