@@ -22,7 +22,7 @@ public class User {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
     @PositiveOrZero
-    private Set<User> usersInFriends;
+    private Set<Integer> usersIdsInFriends;
 
     public User(int id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
@@ -30,5 +30,13 @@ public class User {
         this.login = login;
         this.name = name;
         this.birthday = birthday;
+    }
+
+    public Set<Integer> getUsersIdsInFriends() {
+        return usersIdsInFriends;
+    }
+
+    public void setUsersIdsInFriends(Set<Integer> usersIdsInFriends) {
+        this.usersIdsInFriends = usersIdsInFriends;
     }
 }

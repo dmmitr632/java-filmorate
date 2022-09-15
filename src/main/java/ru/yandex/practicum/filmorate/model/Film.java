@@ -26,7 +26,7 @@ public class Film {
     @PositiveOrZero
     private int duration;
     @PositiveOrZero
-    private Set<User> usersWhoLikedFilm;
+    private Set<Integer> userIdsWhoLikedFilm;
 
     public Film(int id, String name, String description, LocalDate releaseDate, int duration) {
         this.id = id;
@@ -34,5 +34,13 @@ public class Film {
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+    }
+
+    public Set<Integer> getUserIdsWhoLikedFilm() {
+        return userIdsWhoLikedFilm;
+    }
+
+    public void setUserIdsWhoLikedFilm(Set<Integer> userIdsWhoLikedFilm) {
+        this.userIdsWhoLikedFilm = userIdsWhoLikedFilm;
     }
 }

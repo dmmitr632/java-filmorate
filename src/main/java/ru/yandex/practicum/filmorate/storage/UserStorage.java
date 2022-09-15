@@ -7,13 +7,13 @@ import javax.validation.Valid;
 import java.util.List;
 
 public interface UserStorage {
-    public User addUser(@Valid @RequestBody User user);
+    User addUser(@Valid @RequestBody User user);
 
-    public User editUser(@Valid @RequestBody User user);
+    User editUser(@Valid @RequestBody User user);
 
-    public List<User> viewAllUsers();
+    List<User> viewAllUsers();
 
-    public void validateUser(User user);
+    void validateUser(User user);
 
-    public int generateId();
+    int generateId();
 }

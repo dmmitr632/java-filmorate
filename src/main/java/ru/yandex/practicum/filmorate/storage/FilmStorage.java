@@ -7,13 +7,13 @@ import javax.validation.Valid;
 import java.util.List;
 
 public interface FilmStorage {
-    public Film addFilm(@Valid @RequestBody Film film);
+    Film addFilm(@Valid @RequestBody Film film);
 
-    public Film editFilm(@Valid @RequestBody Film film);
+    Film editFilm(@Valid @RequestBody Film film);
 
-    public List<Film> viewAllFilms();
+    List<Film> viewAllFilms();
 
-    public void validateFilm(Film film);
+    void validateFilm(Film film);
 
-    public int generateId();
+    int generateId();
 }
