@@ -8,6 +8,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 public class Film {
@@ -24,6 +25,8 @@ public class Film {
     @NotNull
     @PositiveOrZero
     private int duration;
+    @PositiveOrZero
+    private Set<User> usersWhoLikedFilm;
 
     public Film(int id, String name, String description, LocalDate releaseDate, int duration) {
         this.id = id;
