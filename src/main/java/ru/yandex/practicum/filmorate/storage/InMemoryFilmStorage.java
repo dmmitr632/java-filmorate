@@ -35,9 +35,15 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film viewFilm(Film film) {
-        log.info("Films {}", film);
+    public Film getFilm(Film film) {
+        log.info("Film {}", film);
         return film;
+    }
+
+    @Override
+    public Film getFilmById(int filmId) {
+        log.info("Film by id {}, {}", filmId, this.viewAllFilms().get(filmId));
+        return this.viewAllFilms().get(filmId);
     }
 
     @Override

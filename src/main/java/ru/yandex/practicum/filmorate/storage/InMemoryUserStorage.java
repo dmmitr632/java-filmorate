@@ -63,6 +63,18 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
+    public User getUser(User user) {
+        log.info("User {}", user);
+        return user;
+    }
+
+    @Override
+    public User getUserById(int userId) {
+        log.info("User by id {}, {}", userId, this.viewAllUsers().get(userId));
+        return this.viewAllUsers().get(userId);
+    }
+
+    @Override
     public void validateUser(User user) {
         if (user.getId() < 0) {
             throw new InvalidIdOfUserException();

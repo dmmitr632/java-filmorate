@@ -3,7 +3,10 @@ package ru.yandex.practicum.filmorate.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -21,7 +24,6 @@ public class User {
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
-    @PositiveOrZero
     private Set<Integer> usersIdsInFriends;
     private Set<Integer> likedFilmIds;
 
@@ -37,9 +39,13 @@ public class User {
         return usersIdsInFriends;
     }
 
-    public Set<Integer> getLikedFilmIds() {
-        return likedFilmIds;
-    }
+    //    public Set<User> getUsersInFriends() {
+    //        Set<User>
+    //    }
+
+    //    public Set<Integer> getLikedFilmIds() {
+    //        return likedFilmIds;
+    //    }
 
     public void addLikedFilmId(int filmId) {
         likedFilmIds.add(filmId);

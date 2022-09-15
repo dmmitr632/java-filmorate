@@ -13,7 +13,9 @@ public interface FilmStorage {
 
     List<Film> viewAllFilms();
 
-    Film viewFilm(@Valid @RequestBody Film film);
+    Film getFilm(@Valid @RequestBody Film film);
+
+    Film getFilmById(@Valid int filmId);
 
     void validateFilm(Film film);
 

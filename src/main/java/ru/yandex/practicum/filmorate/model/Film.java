@@ -25,7 +25,6 @@ public class Film {
     @NotNull
     @PositiveOrZero
     private int duration;
-    @PositiveOrZero
     private Set<Integer> userIdsWhoLikedFilm;
 
     public Film(int id, String name, String description, LocalDate releaseDate, int duration) {

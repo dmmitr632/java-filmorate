@@ -13,6 +13,10 @@ public interface UserStorage {
 
     List<User> viewAllUsers();
 
+    User getUser(@Valid @RequestBody User user);
+
+    User getUserById(@Valid int userId);
+
     void validateUser(User user);
 
     int generateId();
