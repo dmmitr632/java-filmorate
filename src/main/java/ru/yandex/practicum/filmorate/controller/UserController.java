@@ -42,20 +42,26 @@ public class UserController {
         return userStorage.viewAllUsers();
     }
 
-    //PUT /users/{id}/friends/{friendId} — добавление в друзья.
-    //DELETE /users/{id}/friends/{friendId} — удаление из друзей.
-    //GET /users/{id}/friends — возвращаем список пользователей, являющихся его друзьями.
-    //GET /users/{id}/friends/common/{otherId} — список друзей, общих с другим пользователем.
+    @GetMapping("/{id}")
+    public User viewUserByID(@PathVariable int id) {
+        System.out.println("viewUserByID !!!");
+        return userStorage.getUserById(id);
+    }
+
+
 
     @PutMapping("/{id}/friends/{friendId}")
     public void userAddsFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
         userService.addToFriends(id, friendId);
     }
 
-    @DeleteMapping("/{id}/like/{userId}")
-    public void userRemovesLikeToFilm(@PathVariable Integer id, @PathVariable Integer userId) {
+    @DeleteMapping("/{id}/friends/{userId}")
+    public void userRemovesFriend(@PathVariable Integer id, @PathVariable Integer userId) {
+        System.out.println("UserController userRemovesFriend");
         userService.removeFromFriends(id, userId);
     }
+
+
 
     @GetMapping("{id}/friends")
     public Set<User> viewAllFriendsOfUser(@PathVariable int id) {

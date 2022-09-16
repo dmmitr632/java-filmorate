@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
@@ -44,6 +45,11 @@ public class FilmController {
         return filmStorage.viewAllFilms();
     }
 
+    @GetMapping("/{id}")
+    public Film viewFilmByID(@PathVariable int id) {
+        return filmStorage.getFilmById(id);
+    }
+
     //PUT /films/{id}/like/{userId} — пользователь ставит лайк фильму.
     //DELETE /films/{id}/like/{userId} — пользователь удаляет лайк.
     //GET /films/popular?count={count} — возвращает список из первых count фильмов по количеству лайков. Если
@@ -55,8 +61,9 @@ public class FilmController {
 
     @PutMapping("/{id}/like/{userId}")
     public void userAddsLikeToFilm(@PathVariable Integer id, @PathVariable Integer userId) {
-        userStorage.getUserById(userId).addLikedFilmId(id);
+        System.out.println("FilmController userAddsLikeToFilm");
         filmStorage.getFilmById(id).addUsersWhoLikedFilm(userId);
+        userStorage.getUserById(userId).addLikedFilmId(id);
     }
 
     @DeleteMapping("/{id}/like/{userId}")

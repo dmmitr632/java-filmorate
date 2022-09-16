@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.exceptions.film.InvalidDescriptionException
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidIdOfFilmException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidNameException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidReleaseDateException;
+import ru.yandex.practicum.filmorate.exceptions.user.InvalidIdOfUserException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
@@ -35,15 +36,25 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilm(Film film) {
-        log.info("Film {}", film);
-        return film;
+    public Map<Integer, Film> getFilms() {
+        log.info("All films, {}", films);
+        return films;
     }
+
+
+//    @Override
+//    public Film getFilm(Film film) {
+//        log.info("Film {}", film);
+//        return film;
+//    }
 
     @Override
     public Film getFilmById(int filmId) {
-        log.info("Film by id {}, {}", filmId, this.viewAllFilms().get(filmId));
-        return this.viewAllFilms().get(filmId);
+        log.info("Film by id {}, {}", filmId, this.getFilms().get(filmId));
+        if (filmId < 0) {
+            throw new InvalidIdOfFilmException();
+        }
+        return this.getFilms().get(filmId);
     }
 
     @Override
@@ -80,6 +91,11 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public void validateFilm(Film film) {
+
+        if (film.getId() < 0) {
+            throw new InvalidIdOfFilmException();
+        }
+
         if (film.getName().equals("")) {
             log.info("Empty film name {}", film.getName());
             throw new InvalidNameException("film lacks name");

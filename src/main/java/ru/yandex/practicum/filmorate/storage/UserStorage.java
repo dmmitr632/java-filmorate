@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 public interface UserStorage {
     User addUser(@Valid @RequestBody User user);
@@ -12,6 +13,7 @@ public interface UserStorage {
     User editUser(@Valid @RequestBody User user);
 
     List<User> viewAllUsers();
+    Map<Integer, User> getUsers();
 
     User getUser(@Valid @RequestBody User user);
 

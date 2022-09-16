@@ -8,6 +8,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -33,6 +34,7 @@ public class Film {
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
+        userIdsWhoLikedFilm = new HashSet<>();
     }
 
     public Set<Integer> getUsersWhoLikedFilm() {
@@ -41,6 +43,25 @@ public class Film {
 
     public void addUsersWhoLikedFilm(int userIdsWhoLikedFilm) {
         this.userIdsWhoLikedFilm.add(userIdsWhoLikedFilm);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Film)) {
+            return false;
+        }
+
+        Film film = (Film) o;
+
+        return getId() == film.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return getId();
     }
 
     public void removeUsersWhoLikedFilm(int userIdsWhoLikedFilm) {

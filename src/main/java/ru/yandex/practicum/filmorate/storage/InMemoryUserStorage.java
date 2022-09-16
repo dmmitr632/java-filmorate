@@ -63,6 +63,12 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
+    public Map<Integer, User> getUsers() {
+        log.info("All users {} ", users);
+        return users;
+    }
+
+    @Override
     public User getUser(User user) {
         log.info("User {}", user);
         return user;
@@ -70,8 +76,11 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User getUserById(int userId) {
-        log.info("User by id {}, {}", userId, this.viewAllUsers().get(userId));
-        return this.viewAllUsers().get(userId);
+        System.out.println("getUserById (User Storage)");
+        if (!users.containsKey(userId)) throw new InvalidIdOfUserException();
+        System.out.println("Pre-logging");
+        log.info("User by id {}, {}", userId, this.users.get(userId));
+        return this.users.get(userId);
     }
 
     @Override

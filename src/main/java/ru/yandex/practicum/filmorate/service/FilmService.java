@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FilmLikesReversedComparator;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,21 +17,9 @@ public class FilmService {
     private final FilmStorage filmStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
     }
-
-    //    public Film addLikeToFilm(Film film, User user) {
-    //        film.addUsersWhoLikedFilm(user.getId());
-    //        user.addLikedFilmId(film.getId());
-    //        return film;
-    //    }
-    //
-    //    public Film removeLikeFromFilm(Film film, User user) {
-    //        film.removeUsersWhoLikedFilm(user.getId());
-    //        user.removeLikedFilmId(film.getId());
-    //        return film;
-    //    }
 
     public List<Film> viewMostLikedFilms(int number) {
         List<Film> mostLikedFilms = new ArrayList<>();
@@ -44,6 +33,8 @@ public class FilmService {
         }
         return mostLikedFilms;
     }
+
+    //public void
 }
 
 

@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -33,6 +34,27 @@ public class User {
         this.login = login;
         this.name = name;
         this.birthday = birthday;
+        usersIdsInFriends = new HashSet<>();
+        likedFilmIds = new HashSet<>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof User)) {
+            return false;
+        }
+
+        User user = (User) o;
+
+        return getId() == user.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return getId();
     }
 
     public Set<Integer> getUsersIdsInFriends() {
@@ -55,11 +77,13 @@ public class User {
         likedFilmIds.remove(filmId);
     }
 
-    public void addUsersInFriends(int userIdsWhoLikedFilm) {
-        this.usersIdsInFriends.add(userIdsWhoLikedFilm);
+    public void addUsersInFriends(int friendId) {
+        System.out.println("Trying to add friend with id " + friendId );
+        this.usersIdsInFriends.add(friendId);
+        System.out.println("Friend added");
     }
 
-    public void removeUsersInFriends(int userIdsWhoLikedFilm) {
-        this.usersIdsInFriends.remove(userIdsWhoLikedFilm);
+    public void removeUsersInFriends(int friendId) {
+        this.usersIdsInFriends.remove(friendId);
     }
 }
