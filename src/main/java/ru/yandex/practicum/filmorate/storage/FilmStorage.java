@@ -16,8 +16,6 @@ public interface FilmStorage {
 
     Map<Integer, Film> getFilms();
 
-    //Film getFilm(@Valid @RequestBody Film film);
-
     Film getFilmById(@Valid int filmId);
 
     void validateFilm(Film film);

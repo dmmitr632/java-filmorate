@@ -69,16 +69,12 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUser(User user) {
-        log.info("User {}", user);
-        return user;
-    }
-
-    @Override
     public User getUserById(int userId) {
-        System.out.println("getUserById (User Storage)");
-        if (!users.containsKey(userId)) throw new InvalidIdOfUserException();
-        System.out.println("Pre-logging");
+
+        if (!users.containsKey(userId)) {
+            throw new InvalidIdOfUserException();
+        }
+
         log.info("User by id {}, {}", userId, this.users.get(userId));
         return this.users.get(userId);
     }

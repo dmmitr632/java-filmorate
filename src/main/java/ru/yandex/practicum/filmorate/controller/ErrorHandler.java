@@ -12,63 +12,33 @@ import ru.yandex.practicum.filmorate.model.ErrorResponse;
 
 @RestControllerAdvice
 public class ErrorHandler {
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST) //400
     public ErrorResponse handleInvalidBirthdayException(final InvalidBirthdayException e) {
-        return new ErrorResponse("My ErrorHandler " +
-                e.getMessage()
-        );
+        return new ErrorResponse("My ErrorHandler " + e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST) //400
     public ErrorResponse handleInvalidLoginException(final InvalidLoginException e) {
-        return new ErrorResponse("My ErrorHandler " +
-                e.getMessage()
-        );
+        return new ErrorResponse("My ErrorHandler " + e.getMessage());
     }
 
-
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.BAD_REQUEST) //400
-//    public ErrorResponse handleInvalidEmailException(final InvalidEmailException e) {
-//        return new ErrorResponse(
-//                e.getMessage()
-//        );
-//    }
-//
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.NOT_FOUND) //404
-//    public ErrorResponse handlePostNotFoundException(final PostNotFoundException e) {
-//        return new ErrorResponse(
-//                e.getMessage()
-//        );
-//    }
-//
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND) //404
     public ErrorResponse handleUserNotFoundException(final InvalidIdOfUserException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND) //404
     public ErrorResponse handleFilmNotFoundException(final InvalidIdOfFilmException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
+        return new ErrorResponse(e.getMessage());
     }
-
-
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR) //500
     public ErrorResponse handleThrowable(final Throwable e) {
-        return new ErrorResponse("My ErrorHandler " +
-                "Произошла непредвиденная ошибка."
-        );
+        return new ErrorResponse("My ErrorHandler " + "Произошла непредвиденная ошибка.");
     }
 }

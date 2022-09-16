@@ -61,14 +61,6 @@ public class User {
         return usersIdsInFriends;
     }
 
-    //    public Set<User> getUsersInFriends() {
-    //        Set<User>
-    //    }
-
-    //    public Set<Integer> getLikedFilmIds() {
-    //        return likedFilmIds;
-    //    }
-
     public void addLikedFilmId(int filmId) {
         likedFilmIds.add(filmId);
     }
@@ -78,7 +70,7 @@ public class User {
     }
 
     public void addUsersInFriends(int friendId) {
-        System.out.println("Trying to add friend with id " + friendId );
+        System.out.println("Trying to add friend with id " + friendId);
         this.usersIdsInFriends.add(friendId);
         System.out.println("Friend added");
     }

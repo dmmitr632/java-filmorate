@@ -13,9 +13,8 @@ public interface UserStorage {
     User editUser(@Valid @RequestBody User user);
 
     List<User> viewAllUsers();
-    Map<Integer, User> getUsers();
 
-    User getUser(@Valid @RequestBody User user);
+    Map<Integer, User> getUsers();
 
     User getUserById(@Valid int userId);
 

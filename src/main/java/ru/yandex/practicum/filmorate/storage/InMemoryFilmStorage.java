@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.exceptions.film.InvalidDescriptionException
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidIdOfFilmException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidNameException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidReleaseDateException;
-import ru.yandex.practicum.filmorate.exceptions.user.InvalidIdOfUserException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
@@ -40,13 +39,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         log.info("All films, {}", films);
         return films;
     }
-
-
-//    @Override
-//    public Film getFilm(Film film) {
-//        log.info("Film {}", film);
-//        return film;
-//    }
 
     @Override
     public Film getFilmById(int filmId) {

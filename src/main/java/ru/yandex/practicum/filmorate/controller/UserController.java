@@ -13,13 +13,12 @@ import java.util.List;
 import java.util.Set;
 
 @Component
-//@Slf4j
 @Validated
 @RestController
 @RequestMapping("users")
 public class UserController {
-    private final UserService userService;
-    private final InMemoryUserStorage userStorage;
+    protected final UserService userService;
+    protected final InMemoryUserStorage userStorage;
 
     @Autowired
     public UserController(UserService userService, InMemoryUserStorage userStorage) {
@@ -44,11 +43,8 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User viewUserByID(@PathVariable int id) {
-        System.out.println("viewUserByID !!!");
         return userStorage.getUserById(id);
     }
-
-
 
     @PutMapping("/{id}/friends/{friendId}")
     public void userAddsFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
@@ -57,11 +53,8 @@ public class UserController {
 
     @DeleteMapping("/{id}/friends/{userId}")
     public void userRemovesFriend(@PathVariable Integer id, @PathVariable Integer userId) {
-        System.out.println("UserController userRemovesFriend");
         userService.removeFromFriends(id, userId);
     }
-
-
 
     @GetMapping("{id}/friends")
     public Set<User> viewAllFriendsOfUser(@PathVariable int id) {
