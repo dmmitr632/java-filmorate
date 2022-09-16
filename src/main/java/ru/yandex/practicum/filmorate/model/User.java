@@ -70,9 +70,8 @@ public class User {
     }
 
     public void addUsersInFriends(int friendId) {
-        System.out.println("Trying to add friend with id " + friendId);
+
         this.usersIdsInFriends.add(friendId);
-        System.out.println("Friend added");
     }
 
     public void removeUsersInFriends(int friendId) {
