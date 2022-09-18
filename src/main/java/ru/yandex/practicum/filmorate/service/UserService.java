@@ -2,11 +2,14 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exceptions.user.InvalidIdOfUserException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import javax.validation.Valid;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -62,5 +65,21 @@ public class UserService {
         }
 
         return friendsOfUser;
+    }
+
+    public User getUserById(int userId) {
+        return userStorage.getUserById(userId);
+    }
+
+    public User addUser(@Valid @RequestBody User user) {
+        return userStorage.addUser(user);
+    }
+
+    public User editUser(@Valid @RequestBody User user) {
+        return userStorage.editUser(user);
+    }
+
+    public List<User> viewAllUsers() {
+        return userStorage.viewAllUsers();
     }
 }

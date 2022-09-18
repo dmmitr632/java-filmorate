@@ -8,8 +8,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.ArrayList;
 import java.util.List;
-
-//операции с фильмами, — добавление и удаление лайка, вывод 10 наиболее популярных фильмов по количеству лайков.
+import java.util.Map;
 
 @Service
 public class FilmService {
@@ -34,6 +33,26 @@ public class FilmService {
         }
 
         return mostLikedFilms;
+    }
+
+    public Film addFilm(Film film) {
+        return filmStorage.addFilm(film);
+    }
+
+    public Film editFilm(Film film) {
+        return filmStorage.editFilm(film);
+    }
+
+    public Film getFilmById(int filmId) {
+        return filmStorage.getFilmById(filmId);
+    }
+
+    public Map<Integer, Film> getFilms() {
+        return filmStorage.getFilms();
+    }
+
+    public List<Film> viewAllFilms() {
+        return filmStorage.viewAllFilms();
     }
 }
 
