@@ -2,9 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidDescriptionException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidIdOfFilmException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidNameException;
@@ -21,8 +19,6 @@ import java.util.Map;
 
 @Component
 @Slf4j
-@Validated
-@RestController
 public class InMemoryFilmStorage implements FilmStorage {
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, Month.DECEMBER, 28);
     private final Map<Integer, Film> films = new HashMap<>();
@@ -42,7 +38,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(int filmId) {
-        log.info("Film by id {}, {}", filmId, this.getFilms().get(filmId));
+        log.info("Film by id {}", filmId);
         if (filmId < 0) {
             throw new InvalidIdOfFilmException();
         }

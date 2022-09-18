@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+// import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.ValidationException;
 import java.time.LocalDate;
@@ -29,7 +30,8 @@ class FilmControllerTest extends FilmController {
 
     @Test
     public void addFilmWithEmptyName() {
-        FilmController filmController = new FilmControllerTest(this.filmService, this.userStorage, this.filmStorage);
+        FilmController filmController = new FilmControllerTest(this.filmService, (InMemoryUserStorage) this.userStorage,
+                (InMemoryFilmStorage) this.filmStorage);
         Film film = new Film(1, "", "description 1", LocalDate.of(2000, 1, 1), 60);
 
         assertThrows(ValidationException.class, () -> filmController.addFilm(film));
@@ -37,7 +39,8 @@ class FilmControllerTest extends FilmController {
 
     @Test
     public void addFilmWithTooLongDescription() {
-        FilmController filmController = new FilmControllerTest(this.filmService, this.userStorage, this.filmStorage);
+        FilmController filmController = new FilmControllerTest(this.filmService,
+                (InMemoryUserStorage) this.userStorage, (InMemoryFilmStorage) this.filmStorage);
 
         String allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890.,-()[]/! ";
         StringBuilder randomLongDescription = new StringBuilder();
@@ -54,7 +57,8 @@ class FilmControllerTest extends FilmController {
 
     @Test
     public void addFilmWithTooEarlyReleaseDate() {
-        FilmController filmController = new FilmControllerTest(this.filmService, this.userStorage, this.filmStorage);
+        FilmController filmController = new FilmControllerTest(this.filmService, (InMemoryUserStorage) this.userStorage,
+                (InMemoryFilmStorage) this.filmStorage);
         Film film = new Film(1, "film1", "description 1", LocalDate.of(1500, 1, 1), 60);
 
         assertThrows(InvalidReleaseDateException.class, () -> filmController.addFilm(film));
