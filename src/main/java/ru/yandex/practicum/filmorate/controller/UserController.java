@@ -1,85 +1,65 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.user.InvalidBirthdayException;
-import ru.yandex.practicum.filmorate.exceptions.user.InvalidIdOfUserException;
-import ru.yandex.practicum.filmorate.exceptions.user.InvalidLoginException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
-@Slf4j
+@Component
 @Validated
 @RestController
 @RequestMapping("users")
 public class UserController {
-    private final Map<Integer, User> users = new HashMap<>();
-    private int id;
+    protected final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
-        log.info("Trying to add User with id {}, user.toString {} ", user.getId(), user);
-        validateUser(user);
-        for (User otherUser : users.values()) {
-            if (otherUser.getId() == user.getId()) {
-                throw new InvalidIdOfUserException();
-            }
-        }
-        if (user.getId() == 0) {
-            user.setId(generateId());
-        }
-        users.put(user.getId(), user);
-        log.info("Added User with id {}, user.toString {} ", user.getId(), user);
-        return user;
+        return userService.addUser(user);
     }
 
     @PutMapping
     public User editUser(@Valid @RequestBody User user) {
-        log.info("Trying to edit User with id {}, user.toString {} ", user.getId(), user);
-        validateUser(user);
-        for (User userEdited : users.values()) {
-            if (userEdited.getId() == user.getId()) {
-                users.replace(userEdited.getId(), user);
-                log.info("Edited User with id {}, user.toString {} ", user.getId(), user);
-                return user;
-            }
-        }
-        throw new InvalidIdOfUserException();
+        return userService.editUser(user);
     }
 
     @GetMapping
     public List<User> viewAllUsers() {
-        log.info("All users {} ", users);
-        return new ArrayList<>(users.values());
+        return userService.viewAllUsers();
     }
 
-    public void validateUser(User user) {
-        if (user.getId() < 0) {
-            throw new InvalidIdOfUserException();
-        }
-        if (user.getLogin().contains(" ") || Objects.equals(user.getLogin(), "")) {
-            log.info("Wrong login {}", user.getLogin());
-            throw new InvalidLoginException("login contains spaces");
-        }
-
-        if (user.getName() == null || Objects.equals(user.getName(), " ") || Objects.equals(user.getName(), "")) {
-            user.setName(user.getLogin());
-            log.info("Setting name to login {}", user.getLogin());
-        }
-
-        if (user.getBirthday().atStartOfDay(ZoneId.systemDefault()).toInstant().isAfter(Instant.now())) {
-            log.info("Wrong birthday date {}", user.getBirthday());
-            throw new InvalidBirthdayException("Birthday in the future");
-        }
+    @GetMapping("/{id}")
+    public User viewUserByID(@PathVariable int id) {
+        return userService.getUserById(id);
     }
 
-    public int generateId() {
-        this.id++;
-        return this.id;
+    @PutMapping("/{id}/friends/{friendId}")
+    public void userAddsFriend(@PathVariable Integer id, @PathVariable Integer friendId) {
+        userService.addToFriends(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{userId}")
+    public void userRemovesFriend(@PathVariable Integer id, @PathVariable Integer userId) {
+        userService.removeFromFriends(id, userId);
+    }
+
+    @GetMapping("{id}/friends")
+    public Set<User> viewAllFriendsOfUser(@PathVariable int id) {
+        return userService.getAllFriendsForUser(id);
+    }
+
+    @GetMapping("{id}/friends/common/{otherId}")
+    public Set<User> viewCommonFriendsOfUser(@PathVariable int id, @PathVariable int otherId) {
+        return userService.getCommonFriends(id, otherId);
     }
 }
