@@ -23,9 +23,6 @@ public class UserService {
 
     public void addToFriends(int user1Id, int user2Id) {
 
-        if ((!userStorage.getUsers().containsKey(user1Id)) || (!userStorage.getUsers().containsKey(user2Id))) {
-            throw new InvalidIdOfUserException();
-        }
         userStorage.getUserById(user1Id).addUsersInFriends(user2Id);
 
         userStorage.getUserById(user2Id).addUsersInFriends(user1Id);
@@ -33,9 +30,6 @@ public class UserService {
 
     public void removeFromFriends(int user1Id, int user2Id) {
 
-        if ((!userStorage.getUsers().containsKey(user1Id)) || (!userStorage.getUsers().containsKey(user2Id))) {
-            throw new InvalidIdOfUserException();
-        }
         if ((!userStorage.getUserById(user1Id).getUsersIdsInFriends().contains(user2Id)) ||
                 (!userStorage.getUserById(user2Id).getUsersIdsInFriends().contains(user1Id))) {
             throw new InvalidIdOfUserException();

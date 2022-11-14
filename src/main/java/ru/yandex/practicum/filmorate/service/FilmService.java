@@ -6,9 +6,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FilmLikesReversedComparator;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
@@ -20,19 +20,9 @@ public class FilmService {
     }
 
     public List<Film> viewMostLikedFilms(int count) {
-        List<Film> mostLikedFilms = new ArrayList<>();
-        List<Film> allFilms = filmStorage.viewAllFilms();
 
-        int sizeOfFilmList = allFilms.size();
-        FilmLikesReversedComparator filmLikesReversedComparator = new FilmLikesReversedComparator();
-        allFilms.sort(filmLikesReversedComparator);
-
-        for (int i = 0; i < Math.min(count, sizeOfFilmList); i++) {
-
-            mostLikedFilms.add(allFilms.get(i));
-        }
-
-        return mostLikedFilms;
+        return filmStorage.viewAllFilms().stream().sorted(new FilmLikesReversedComparator()).limit(count)
+                .collect(Collectors.toList());
     }
 
     public Film addFilm(Film film) {
