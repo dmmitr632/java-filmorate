@@ -44,6 +44,10 @@ public class FilmService {
     public List<Film> viewAllFilms() {
         return filmStorage.viewAllFilms();
     }
+
+    public FilmStorage getFilmStorage() {
+        return filmStorage;
+    }
 }
 
 
