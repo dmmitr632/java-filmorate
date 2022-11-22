@@ -8,12 +8,16 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
 public class Film {
     private int id;
+    private HashSet<FilmGenre> filmGenres;
+    private FilmMpaRating filmMpaRating;
+
     @NotBlank
     @NotEmpty
     private String name;
