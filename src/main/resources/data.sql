@@ -130,6 +130,41 @@ FROM films_users_liked
 WHERE films_users_liked.film_id = 1
   AND films_users_liked.user_id = 1;
 
+-- Добавляем жанры для фильмов
+INSERT
+INTO films_genres (film_id, genre_id)
+VALUES (1, 3);
+
+INSERT
+INTO films_genres (film_id, genre_id)
+VALUES (1, 2);
+
+INSERT
+INTO films_genres (film_id, genre_id)
+VALUES (1, 6);
+
+INSERT
+INTO films_genres (film_id, genre_id)
+VALUES (2, 1);
+
+INSERT
+INTO films_genres (film_id, genre_id)
+VALUES (2, 4);
+
+-- Добавляем лайки для фильмов
+
+INSERT
+INTO films_users_liked (film_id, user_id)
+VALUES (1, 2);
+
+INSERT
+INTO films_users_liked (film_id, user_id)
+VALUES (1, 1);
+
+INSERT
+INTO films_users_liked (film_id, user_id)
+VALUES (2, 2);
+
 
 
 

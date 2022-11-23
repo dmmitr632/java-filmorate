@@ -27,11 +27,11 @@ CREATE TABLE IF NOT EXISTS genres
 
 CREATE TABLE IF NOT EXISTS films_genres
 (
-    genre_id int NOT NULL,
     film_id  int NOT NULL,
+    genre_id int NOT NULL,
     FOREIGN KEY (genre_id) REFERENCES genres (genre_id),
     FOREIGN KEY (film_id) REFERENCES films (film_id),
-    UNIQUE (genre_id, film_id)
+    UNIQUE (film_id, genre_id)
 );
 
 CREATE TABLE IF NOT EXISTS users
@@ -55,11 +55,11 @@ CREATE TABLE IF NOT EXISTS users_friends
 
 CREATE TABLE IF NOT EXISTS films_users_liked
 (
-    user_id int NOT NULL,
     film_id int NOT NULL,
+    user_id int NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (user_id),
     FOREIGN KEY (film_id) REFERENCES films (film_id),
-    UNIQUE (user_id, film_id)
+    UNIQUE (film_id, user_id)
 );
 
 

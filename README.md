@@ -49,11 +49,11 @@ CREATE TABLE IF NOT EXISTS genres
 
 CREATE TABLE IF NOT EXISTS films_genres
 (
-    genre_id int NOT NULL,
     film_id  int NOT NULL,
+    genre_id int NOT NULL,
     FOREIGN KEY (genre_id) REFERENCES genres (genre_id),
     FOREIGN KEY (film_id) REFERENCES films (film_id),
-    UNIQUE (genre_id, film_id)
+    UNIQUE (film_id, genre_id)
 );
 
 CREATE TABLE IF NOT EXISTS users
@@ -77,11 +77,11 @@ CREATE TABLE IF NOT EXISTS users_friends
 
 CREATE TABLE IF NOT EXISTS films_users_liked
 (
-    user_id int NOT NULL,
     film_id int NOT NULL,
+    user_id int NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (user_id),
     FOREIGN KEY (film_id) REFERENCES films (film_id),
-    UNIQUE (user_id, film_id)
+    UNIQUE (film_id, user_id)
 );
 ```
 
@@ -189,7 +189,7 @@ WHERE users.user_id = 3;
 -- Односторонняя дружба
 INSERT
 INTO users_friends (user_id, friend_id)
-VALUES (1, 2);
+    VALUES (1, 2);
 
 -- Без дружбы
 DELETE
@@ -202,23 +202,58 @@ WHERE users_friends.user_id = 1
 
 INSERT
 INTO users_friends (user_id, friend_id)
-VALUES (1, 2);
+    VALUES (1, 2);
 
 INSERT
 INTO users_friends (user_id, friend_id)
-VALUES (2, 1);
+    VALUES (2, 1);
 
 
 -- добавление лайка фильму
 INSERT
 INTO films_users_liked (user_id, film_id)
-VALUES (1, 1);
+    VALUES (1, 1);
 
 -- удаление лайка у фильма
 DELETE
 FROM films_users_liked
 WHERE films_users_liked.film_id = 1
   AND films_users_liked.user_id = 1;
+
+-- Добавляем жанры для фильмов
+INSERT
+INTO films_genres (film_id, genre_id)
+VALUES (1, 3);
+
+INSERT
+INTO films_genres (film_id, genre_id)
+VALUES (1, 2);
+
+INSERT
+INTO films_genres (film_id, genre_id)
+VALUES (1, 6);
+
+INSERT
+INTO films_genres (film_id, genre_id)
+VALUES (2, 1);
+
+INSERT
+INTO films_genres (film_id, genre_id)
+VALUES (2, 4);
+
+-- Добавляем лайки для фильмов
+
+INSERT
+INTO films_users_liked (film_id, user_id)
+VALUES (1, 2);
+
+INSERT
+INTO films_users_liked (film_id, user_id)
+VALUES (1, 1);
+
+INSERT
+INTO films_users_liked (film_id, user_id)
+VALUES (2, 2);
 ```
 
 ![Схема БД](./src/main/resources/schema.png)
