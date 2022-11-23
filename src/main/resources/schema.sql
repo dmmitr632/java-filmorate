@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS films
     release_date date,
     duration     int,
     rate         double,
+    mpa_rating_id int,
+    FOREIGN KEY (mpa_rating_id)  REFERENCES mpa_rating (mpa_rating_id)
 );
 
 CREATE TABLE IF NOT EXISTS genres
@@ -55,6 +57,5 @@ CREATE TABLE IF NOT EXISTS mpa_rating
 (
     mpa_rating_id varchar(20) PRIMARY KEY AUTO_INCREMENT,
     rating_name varchar(20),
-    film_id int,
-    FOREIGN KEY (film_id) REFERENCES films (film_id)
+
 );
