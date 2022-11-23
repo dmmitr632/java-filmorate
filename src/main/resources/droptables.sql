@@ -1,6 +1,7 @@
---DROP TABLE users;
---DROP TABLE films;
---DROP TABLE genres;
---DROP TABLE films_genres;
---DROP TABLE users_friends;
---DROP TABLE films_users_liked;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS films CASCADE;
+DROP TABLE IF EXISTS genres CASCADE;
+DROP TABLE IF EXISTS films_genres CASCADE ;
+DROP TABLE IF EXISTS users_friends CASCADE ;
+DROP TABLE IF EXISTS films_users_liked CASCADE ;
+DROP TABLE IF EXISTS mpa_rating CASCADE ;

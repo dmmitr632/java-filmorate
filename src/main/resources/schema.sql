@@ -1,3 +1,10 @@
+CREATE TABLE IF NOT EXISTS mpa_rating
+(
+    mpa_rating_id varchar(80) PRIMARY KEY,
+    rating_name varchar(80)
+);
+
+
 CREATE TABLE IF NOT EXISTS films
 (
     film_id           int PRIMARY KEY AUTO_INCREMENT,
@@ -9,6 +16,9 @@ CREATE TABLE IF NOT EXISTS films
     mpa_rating_id int,
     FOREIGN KEY (mpa_rating_id)  REFERENCES mpa_rating (mpa_rating_id)
 );
+
+
+
 
 CREATE TABLE IF NOT EXISTS genres
 (
@@ -53,9 +63,4 @@ CREATE TABLE IF NOT EXISTS films_users_liked
     UNIQUE (user_id, film_id)
 );
 
-CREATE TABLE IF NOT EXISTS mpa_rating
-(
-    mpa_rating_id varchar(20) PRIMARY KEY AUTO_INCREMENT,
-    rating_name varchar(20),
 
-);
