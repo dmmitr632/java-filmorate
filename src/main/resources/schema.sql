@@ -1,57 +1,67 @@
-CREATE TABLE IF NOT EXISTS film
+CREATE TABLE IF NOT EXISTS films
 (
-    id           int PRIMARY KEY,
+    film_id           int PRIMARY KEY AUTO_INCREMENT,
     name         varchar(80),
     description  varchar(200),
     release_date date,
-    duration int,
-    rate double,
-    likes int,
-    genres varchar(20),
-    mpa_rating varchar(20)
+    duration     int,
+    rate         double,
+    likes        int,
+    genres       varchar(20),
+    mpa_rating   varchar(20)
 
 );
 
-CREATE TABLE IF NOT EXISTS genre
+CREATE TABLE IF NOT EXISTS genres
 (
-    id varchar(20) PRIMARY KEY
+    genre_id int PRIMARY KEY,
+    genre_name varchar(20)
 );
 
-CREATE TABLE IF NOT EXISTS film_genre
+CREATE TABLE IF NOT EXISTS films_genres
 (
-    genre_id varchar(20) NOT NULL,
+    genre_id int NOT NULL,
     film_id  int         NOT NULL,
-    FOREIGN KEY (genre_id) REFERENCES genre (id),
-    FOREIGN KEY (film_id) REFERENCES film (id),
+    FOREIGN KEY (genre_id) REFERENCES genres (genre_id),
+    FOREIGN KEY (film_id) REFERENCES films (film_id),
     UNIQUE (genre_id, film_id)
 );
 
-CREATE TABLE IF NOT EXISTS user
+CREATE TABLE IF NOT EXISTS users
 (
-    user_id int NOT NULL PRIMARY KEY,
-    email_id varchar(80) NOT NULL UNIQUE,
-    login varchar(80) UNIQUE,
-    name varchar(80),
-    birthday date,
-    friends int,
+    user_id     int         NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    email    varchar(80) NOT NULL UNIQUE,
+    login       varchar(80) UNIQUE,
+    name        varchar(80),
+    birthday    date,
+    friends     int,
     films_liked int
 
 );
 
-
-CREATE TABLE IF NOT EXISTS film_genre
+CREATE TABLE IF NOT EXISTS users_friends
 (
-    genre_id varchar(20) NOT NULL,
-    film_id  int         NOT NULL,
-    FOREIGN KEY (genre_id) REFERENCES genre (id),
-    FOREIGN KEY (film_id) REFERENCES film (id),
-    UNIQUE (genre_id, film_id)
+    user_id   int NOT NULL,
+    friend_id int NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (user_id),
+    FOREIGN KEY (friend_id) REFERENCES users (user_id),
+    UNIQUE (user_id, friend_id)
 );
 
-CREATE TABLE IF NOT EXISTS user_friends
+
+CREATE TABLE IF NOT EXISTS films_users_liked
 (
     user_id int NOT NULL,
-    friend_id  int         NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user (user_id),
-    FOREIGN KEY (friend_id) REFERENCES user (user_id)
-)
+    film_id  int  NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (user_id),
+    FOREIGN KEY (film_id) REFERENCES films (film_id),
+    UNIQUE (user_id, film_id)
+);
+
+CREATE TABLE IF NOT EXISTS mpa_rating
+(
+    mpa_rating_id varchar(20) PRIMARY KEY AUTO_INCREMENT,
+    rating_name varchar(20),
+    film_id int,
+    FOREIGN KEY (film_id) REFERENCES films (film_id)
+);

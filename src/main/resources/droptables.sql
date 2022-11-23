@@ -1,0 +1,6 @@
+--DROP TABLE users;
+--DROP TABLE films;
+--DROP TABLE genres;
+--DROP TABLE films_genres;
+--DROP TABLE users_friends;
+--DROP TABLE films_users_liked;

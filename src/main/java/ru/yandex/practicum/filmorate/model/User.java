@@ -27,6 +27,7 @@ public class User {
     private LocalDate birthday;
     private Set<Integer> usersIdsInFriends;
     private Set<Integer> likedFilmIds;
+    //private
 
     public User(int id, String email, String login, String name, LocalDate birthday) {
         this.id = id;
