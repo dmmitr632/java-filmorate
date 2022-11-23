@@ -19,7 +19,7 @@ users_friends - таблица для отслеживания статуса д
 
 Код для создания базы данных schema.sql:
 
-```h2
+```sql
 CREATE TABLE IF NOT EXISTS mpa_rating
 (
     mpa_rating_id varchar(80) PRIMARY KEY,
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS films_users_liked
 
 Код для заполнения тестовыми данными(примеры запросов) data.sql
 
-```h2
+```
 -- Добавляем рейтинги
 
 MERGE
