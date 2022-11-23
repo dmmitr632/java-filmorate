@@ -15,7 +15,7 @@ users_friends - таблица для отслеживания статуса д
 
 
 Код для создания базы данных schema.sql:
-```
+```sql
 CREATE TABLE IF NOT EXISTS films
 (
     film_id           int PRIMARY KEY AUTO_INCREMENT,
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS mpa_rating
 
 Код для заполнения тестовыми данными(примеры запросов) data.sql
 
-```
+```sql
 -- Добавляем фильмы
 INSERT
 INTO films
