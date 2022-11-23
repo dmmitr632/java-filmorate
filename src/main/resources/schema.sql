@@ -6,10 +6,6 @@ CREATE TABLE IF NOT EXISTS films
     release_date date,
     duration     int,
     rate         double,
-    likes        int,
-    genres       varchar(20),
-    mpa_rating   varchar(20)
-
 );
 
 CREATE TABLE IF NOT EXISTS genres
@@ -33,10 +29,7 @@ CREATE TABLE IF NOT EXISTS users
     email    varchar(80) NOT NULL UNIQUE,
     login       varchar(80) UNIQUE,
     name        varchar(80),
-    birthday    date,
-    friends     int,
-    films_liked int
-
+    birthday    date
 );
 
 CREATE TABLE IF NOT EXISTS users_friends

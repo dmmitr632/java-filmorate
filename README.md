@@ -16,73 +16,68 @@ users_friends - таблица для отслеживания статуса д
 
 Код для создания базы данных:
 ```
-CREATE TABLE IF NOT EXISTS films
-(
-    film_id           int PRIMARY KEY AUTO_INCREMENT,
-    name         varchar(80),
-    description  varchar(200),
-    release_date date,
-    duration     int,
-    rate         double,
-    likes        int,
-    genres       varchar(20),
-    mpa_rating   varchar(20)
-
+CREATE TABLE `films` (
+  `film_id` int PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(80),
+  `description` varchar(200),
+  `release_date` date,
+  `duration` int,
+  `rate` double
 );
 
-CREATE TABLE IF NOT EXISTS genres
-(
-    genre_id int PRIMARY KEY,
-    genre_name varchar(20)
+CREATE TABLE `genres` (
+  `genre_id` int PRIMARY KEY,
+  `genre_name` varchar(20)
 );
 
-CREATE TABLE IF NOT EXISTS films_genres
-(
-    genre_id int NOT NULL,
-    film_id  int         NOT NULL,
-    FOREIGN KEY (genre_id) REFERENCES genres (genre_id),
-    FOREIGN KEY (film_id) REFERENCES films (film_id),
-    UNIQUE (genre_id, film_id)
+CREATE TABLE `films_genres` (
+  `genre_id` int NOT NULL,
+  `film_id` int NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS users
-(
-    user_id     int         NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    email    varchar(80) NOT NULL UNIQUE,
-    login       varchar(80) UNIQUE,
-    name        varchar(80),
-    birthday    date,
-    friends     int,
-    films_liked int
-
+CREATE TABLE `users` (
+  `user_id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `email` varchar(80) UNIQUE NOT NULL,
+  `login` varchar(80) UNIQUE,
+  `name` varchar(80),
+  `birthday` date
 );
 
-CREATE TABLE IF NOT EXISTS users_friends
-(
-    user_id   int NOT NULL,
-    friend_id int NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (user_id),
-    FOREIGN KEY (friend_id) REFERENCES users (user_id),
-    UNIQUE (user_id, friend_id)
+CREATE TABLE `users_friends` (
+  `user_id` int NOT NULL,
+  `friend_id` int NOT NULL
 );
 
-
-CREATE TABLE IF NOT EXISTS films_users_liked
-(
-    user_id int NOT NULL,
-    film_id  int  NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (user_id),
-    FOREIGN KEY (film_id) REFERENCES films (film_id),
-    UNIQUE (user_id, film_id)
+CREATE TABLE `films_users_liked` (
+  `user_id` int NOT NULL,
+  `film_id` int NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS mpa_rating
-(
-    mpa_rating_id varchar(20) PRIMARY KEY AUTO_INCREMENT,
-    rating_name varchar(20),
-    film_id int,
-    FOREIGN KEY (film_id) REFERENCES films (film_id)
+CREATE TABLE `mpa_rating` (
+  `mpa_rating_id` varchar(20) PRIMARY KEY AUTO_INCREMENT,
+  `rating_name` varchar(20),
+  `film_id` int
 );
+
+CREATE UNIQUE INDEX `films_genres_index_0` ON `films_genres` (`genre_id`, `film_id`);
+
+CREATE UNIQUE INDEX `users_friends_index_1` ON `users_friends` (`user_id`, `friend_id`);
+
+CREATE UNIQUE INDEX `films_users_liked_index_2` ON `films_users_liked` (`user_id`, `film_id`);
+
+ALTER TABLE `films_genres` ADD FOREIGN KEY (`genre_id`) REFERENCES `genres` (`genre_id`);
+
+ALTER TABLE `films_genres` ADD FOREIGN KEY (`film_id`) REFERENCES `films` (`film_id`);
+
+ALTER TABLE `users_friends` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+ALTER TABLE `users_friends` ADD FOREIGN KEY (`friend_id`) REFERENCES `users` (`user_id`);
+
+ALTER TABLE `films_users_liked` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+ALTER TABLE `films_users_liked` ADD FOREIGN KEY (`film_id`) REFERENCES `films` (`film_id`);
+
+ALTER TABLE `mpa_rating` ADD FOREIGN KEY (`film_id`) REFERENCES `films` (`film_id`);
 ```
 
-![Схема БД](./src/main/resources/scheme.png)
+![Схема БД](./src/main/resources/schema.png)
