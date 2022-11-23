@@ -1,11 +1,79 @@
--- Добавляем фильмы
-INSERT
-INTO films
-VALUES (1, 'Фильм 1', 'Описание фильма 1 ', '2010-01-01', 120, 5.0, 1);
+-- Добавляем рейтинги
 
-INSERT
+MERGE
+INTO mpa_rating
+    VALUES (1, 'G');
+
+MERGE
+INTO mpa_rating
+    VALUES (2, 'PG');
+
+MERGE
+INTO mpa_rating
+    VALUES (3, 'PG_13');
+
+MERGE
+INTO mpa_rating
+    VALUES (4, 'R');
+
+MERGE
+INTO mpa_rating
+    VALUES (5, 'NC_17');
+
+-- Добавляем жанры фильмов
+
+MERGE
+INTO genres
+    VALUES (1, 'Comedy');
+
+MERGE
+INTO genres
+    VALUES (2, 'Drama');
+
+MERGE
+INTO genres
+    VALUES (3, 'Cartoon');
+
+MERGE
+INTO genres
+    VALUES (4, 'Thriller');
+
+MERGE
+INTO genres
+    VALUES (5, 'Documentary');
+
+MERGE
+INTO genres
+    VALUES (6, 'Action');
+
+
+-- Добавляем пользователей
+MERGE
+INTO users
+    VALUES (1, 'anna@gmail.com', 'anna', 'Anna', '2000-01-01');
+
+MERGE
+INTO users
+    VALUES (2, 'joe@gmail.com', 'joelogin', 'Joe', '2005-05-01');
+
+MERGE
+INTO users
+    VALUES (3, 'joe2@gmail.com', 'joelogin2', 'Joe', '2005-05-01');
+
+
+-- Добавляем фильмы
+MERGE
 INTO films
-VALUES (2, 'Фильм 2', 'Описание фильма 2', '2015-01-01', 150, 9.0, 2);
+    VALUES (1, 'Фильм 1', 'Описание фильма 1 ', '2010-01-01', 120, 5.0, 1);
+
+MERGE
+INTO films
+    VALUES (2, 'Фильм 2', 'Описание фильма 2', '2015-01-01', 150, 9.0, 2);
+
+
+MERGE
+INTO films
+    VALUES (3, 'Фильм 3', 'Описание фильма 3', '2012-01-01', 150, 8.2, 2);
 
 -- Обновляем фильм
 UPDATE films
@@ -15,20 +83,7 @@ WHERE films.film_id = 1;
 -- Удаляем фильм
 DELETE
 FROM films
-WHERE films.film_id = 1;
-
--- Добавляем пользователей
-INSERT
-INTO users
-VALUES (1, 'anna@gmail.com', 'anna', 'Anna', '2000-01-01');
-
-INSERT
-INTO users
-VALUES (2, 'joe@gmail.com', 'joelogin', 'Joe', '2005-05-01');
-
-INSERT
-INTO users
-VALUES (3, 'joe@gmail.com', 'joelogin2', 'Joe', '2005-05-01');
+WHERE films.film_id = 3;
 
 
 -- Обновляем пользователя
@@ -44,7 +99,7 @@ WHERE users.user_id = 3;
 -- Односторонняя дружба
 INSERT
 INTO users_friends (user_id, friend_id)
-VALUES (1, 2);
+    VALUES (1, 2);
 
 -- Без дружбы
 DELETE
@@ -57,17 +112,17 @@ WHERE users_friends.user_id = 1
 
 INSERT
 INTO users_friends (user_id, friend_id)
-VALUES (1, 2);
+    VALUES (1, 2);
 
 INSERT
 INTO users_friends (user_id, friend_id)
-VALUES (2, 1);
+    VALUES (2, 1);
 
 
 -- добавление лайка фильму
 INSERT
 INTO films_users_liked (user_id, film_id)
-VALUES (1, 1);
+    VALUES (1, 1);
 
 -- удаление лайка у фильма
 DELETE
