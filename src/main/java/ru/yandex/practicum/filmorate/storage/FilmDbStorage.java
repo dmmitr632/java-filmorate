@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import mapper.FilmMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -53,26 +54,9 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> viewAllFilms() {
-
-
         String sqlQuery = ("SELECT * FROM films");
-        return jdbcTemplate.query(sqlQuery, new RowMapper<Film>() {
-                    @Override
-                    public Film mapRow(@NonNull ResultSet rs, int rowNum) throws SQLException {
-                        int id = rs.getInt("id");
-                        //FilmMpaRating filmMpaRating = rs.getString("");
-                        String name = rs.getString("name");
-                        String description = rs.getString("description");
-                        LocalDate releaseDate = rs.getDate("release_date").toLocalDate();
-                        int duration = rs.getInt("duration");
-                        int rate =rs.getInt("rate");
-                        Film film = Film.builder().id(id).name(name).description(description).
-                                releaseDate(releaseDate).duration(duration).rate(rate).build();
-                        log.info("Список фильмов получен");
-                        return film;
-                    }
-
-        });
+        System.out.println("VIEWALLFILMS");
+        return jdbcTemplate.query(sqlQuery, new FilmMapper());
     }
 
 

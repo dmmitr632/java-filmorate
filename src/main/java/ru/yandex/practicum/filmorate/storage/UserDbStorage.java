@@ -43,21 +43,6 @@ public class UserDbStorage implements  UserStorage{
 
     @Override
    public Optional<User> getUserById(int userId) {
-//        SqlRowSet userRows = jdbcTemplate.queryForRowSet("select * from users where user_id = ?", userId);
-//        if (userRows.next()) {
-//
-//            User user = new User(userRows.getI("user_id"), userRows.getString("username"),
-//                    userRows.getString("nickname"));
-//
-//            log.info("Найден пользователь: {} {}", userRows.getString("user_id"), userRows.getString("nickname"));
-//
-//            user.setId(id);
-//            return Optional.of(user);
-//        } else {
-//            log.info("Пользователь с идентификатором {} не найден.", id);
-//            return Optional.empty();
-//        }
-//    }
         return null;
     }
 
