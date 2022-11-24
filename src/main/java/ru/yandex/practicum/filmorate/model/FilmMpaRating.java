@@ -1,14 +1,19 @@
 package ru.yandex.practicum.filmorate.model;
 
-public enum FilmMpaRating {
+import lombok.Data;
+
+@Data
+public class FilmMpaRating {
     //G — у фильма нет возрастных ограничений,
     //PG — детям рекомендуется смотреть фильм с родителями,
     //PG-13 — детям до 13 лет просмотр не желателен,
     //R — лицам до 17 лет просматривать фильм можно только в присутствии взрослого,
     //NC-17 — лицам до 18 лет просмотр запрещён.
-    G,
-    PG,
-    PG_13,
-    R,
-    NC_17
+    //    G,
+    //    PG,
+    //    PG_13,
+    //    R,
+    //    NC_17
+    private int id;
+    private String name;
 }

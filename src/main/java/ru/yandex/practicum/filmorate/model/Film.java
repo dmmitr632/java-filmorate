@@ -15,7 +15,7 @@ import java.util.Set;
 @Data
 public class Film {
     private int id;
-    private HashSet<FilmGenre> filmGenres;
+    // private HashSet<FilmGenre> filmGenres;
     private FilmMpaRating filmMpaRating;
 
     @NotBlank
@@ -32,7 +32,7 @@ public class Film {
     private int duration;
     @PositiveOrZero
     private int rate;
-    private Set<Integer> userIdsWhoLikedFilm;
+    // private Set<Integer> userIdsWhoLikedFilm;
 
     public Film(int id, String name, String description, LocalDate releaseDate, int duration) {
         this.id = id;
@@ -40,7 +40,7 @@ public class Film {
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
-        userIdsWhoLikedFilm = new HashSet<>();
+        // userIdsWhoLikedFilm = new HashSet<>();
     }
 
     public int getRate() {
@@ -51,13 +51,13 @@ public class Film {
         this.rate = rate;
     }
 
-    public Set<Integer> getUsersWhoLikedFilm() {
-        return userIdsWhoLikedFilm;
-    }
-
-    public void addUsersWhoLikedFilm(int userIdsWhoLikedFilm) {
-        this.userIdsWhoLikedFilm.add(userIdsWhoLikedFilm);
-    }
+//    public Set<Integer> getUsersWhoLikedFilm() {
+//        return userIdsWhoLikedFilm;
+//    }
+//
+//    public void addUsersWhoLikedFilm(int userIdsWhoLikedFilm) {
+//        this.userIdsWhoLikedFilm.add(userIdsWhoLikedFilm);
+//    }
 
     @Override
     public boolean equals(Object o) {
@@ -78,7 +78,7 @@ public class Film {
         return getId();
     }
 
-    public void removeUsersWhoLikedFilm(int userIdsWhoLikedFilm) {
-        this.userIdsWhoLikedFilm.remove(userIdsWhoLikedFilm);
-    }
+//    public void removeUsersWhoLikedFilm(int userIdsWhoLikedFilm) {
+//        this.userIdsWhoLikedFilm.remove(userIdsWhoLikedFilm);
+//    }
 }
