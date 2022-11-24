@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS films_users_liked
 
 Код для заполнения тестовыми данными(примеры запросов) data.sql
 
-```h2
+```postgresql
 -- Добавляем рейтинги
 
 MERGE
@@ -187,8 +187,8 @@ FROM users
 WHERE users.user_id = 3;
 
 -- Односторонняя дружба
-INSERT
-INTO users_friends (user_id, friend_id)
+MERGE
+INTO users_friends KEY (user_id, friend_id)
     VALUES (1, 2);
 
 -- Без дружбы
@@ -200,18 +200,18 @@ WHERE users_friends.user_id = 1
 
 -- Двусторонняя дружба
 
-INSERT
-INTO users_friends (user_id, friend_id)
+MERGE
+INTO users_friends KEY (user_id, friend_id)
     VALUES (1, 2);
 
-INSERT
-INTO users_friends (user_id, friend_id)
+MERGE
+INTO users_friends KEY (user_id, friend_id)
     VALUES (2, 1);
 
 
 -- добавление лайка фильму
-INSERT
-INTO films_users_liked (user_id, film_id)
+MERGE
+INTO films_users_liked KEY (user_id, film_id)
     VALUES (1, 1);
 
 -- удаление лайка у фильма
@@ -221,39 +221,40 @@ WHERE films_users_liked.film_id = 1
   AND films_users_liked.user_id = 1;
 
 -- Добавляем жанры для фильмов
-INSERT
-INTO films_genres (film_id, genre_id)
-VALUES (1, 3);
+MERGE
+INTO films_genres key (film_id, genre_id)
+    VALUES (1, 3);
 
-INSERT
-INTO films_genres (film_id, genre_id)
-VALUES (1, 2);
+MERGE
+INTO films_genres key (film_id, genre_id)
+    VALUES (1, 2);
 
-INSERT
-INTO films_genres (film_id, genre_id)
-VALUES (1, 6);
+MERGE
+INTO films_genres key (film_id, genre_id)
+    VALUES (1, 6);
 
-INSERT
-INTO films_genres (film_id, genre_id)
-VALUES (2, 1);
+MERGE
+INTO films_genres key (film_id, genre_id)
+    VALUES (2, 1);
 
-INSERT
-INTO films_genres (film_id, genre_id)
-VALUES (2, 4);
+MERGE
+INTO films_genres key (film_id, genre_id)
+    VALUES (2, 4);
 
 -- Добавляем лайки для фильмов
 
-INSERT
-INTO films_users_liked (film_id, user_id)
-VALUES (1, 2);
+MERGE
+INTO films_users_liked KEY (film_id, user_id)
+    VALUES (1, 2);
 
-INSERT
-INTO films_users_liked (film_id, user_id)
-VALUES (1, 1);
+MERGE
+INTO films_users_liked KEY (film_id, user_id)
+    VALUES (1, 1);
 
-INSERT
-INTO films_users_liked (film_id, user_id)
-VALUES (2, 2);
+MERGE
+INTO films_users_liked KEY (film_id, user_id)
+    VALUES (2, 2);
+
 ```
 
 ![Схема БД](./src/main/resources/schema.png)

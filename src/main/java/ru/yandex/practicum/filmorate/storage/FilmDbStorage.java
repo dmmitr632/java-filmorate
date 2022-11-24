@@ -55,7 +55,7 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public List<Film> viewAllFilms() {
         String sqlQuery = ("SELECT * FROM films");
-        System.out.println("VIEWALLFILMS");
+        log.info("Отображаем все фильмы");
         return jdbcTemplate.query(sqlQuery, new FilmMapper());
     }
 
