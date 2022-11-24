@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -10,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
+@Builder
 public class User {
     private int id;
     @NotBlank(message = "blank email")
@@ -27,53 +29,53 @@ public class User {
     //    private Set<Integer> likedFilmIds;
     //private
 
-    public User(int id, String email, String login, String name, LocalDate birthday) {
-        this.id = id;
-        this.email = email;
-        this.login = login;
-        this.name = name;
-        this.birthday = birthday;
-        //usersIdsInFriends = new HashSet<>();
-        //likedFilmIds = new HashSet<>();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof User)) {
-            return false;
-        }
-
-        User user = (User) o;
-
-        return getId() == user.getId();
-    }
-
-    @Override
-    public int hashCode() {
-        return getId();
-    }
-
-    //    public Set<Integer> getUsersIdsInFriends() {
-    //        return usersIdsInFriends;
+    //    public User(int id, String email, String login, String name, LocalDate birthday) {
+    //        this.id = id;
+    //        this.email = email;
+    //        this.login = login;
+    //        this.name = name;
+    //        this.birthday = birthday;
+    //        //usersIdsInFriends = new HashSet<>();
+    //        //likedFilmIds = new HashSet<>();
     //    }
     //
-    //    public void addLikedFilmId(int filmId) {
-    //        likedFilmIds.add(filmId);
+    //    @Override
+    //    public boolean equals(Object o) {
+    //        if (this == o) {
+    //            return true;
+    //        }
+    //        if (!(o instanceof User)) {
+    //            return false;
+    //        }
+    //
+    //        User user = (User) o;
+    //
+    //        return getId() == user.getId();
     //    }
     //
-    //    public void removeLikedFilmId(int filmId) {
-    //        likedFilmIds.remove(filmId);
+    //    @Override
+    //    public int hashCode() {
+    //        return getId();
     //    }
     //
-    //    public void addUsersInFriends(int friendId) {
-    //
-    //        this.usersIdsInFriends.add(friendId);
-    //    }
-    //
-    //    public void removeUsersInFriends(int friendId) {
-    //        this.usersIdsInFriends.remove(friendId);
-    //    }
+    //    //    public Set<Integer> getUsersIdsInFriends() {
+    //    //        return usersIdsInFriends;
+    //    //    }
+    //    //
+    //    //    public void addLikedFilmId(int filmId) {
+    //    //        likedFilmIds.add(filmId);
+    //    //    }
+    //    //
+    //    //    public void removeLikedFilmId(int filmId) {
+    //    //        likedFilmIds.remove(filmId);
+    //    //    }
+    //    //
+    //    //    public void addUsersInFriends(int friendId) {
+    //    //
+    //    //        this.usersIdsInFriends.add(friendId);
+    //    //    }
+    //    //
+    //    //    public void removeUsersInFriends(int friendId) {
+    //    //        this.usersIdsInFriends.remove(friendId);
+    //    //    }
 }
