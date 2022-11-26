@@ -10,4 +10,8 @@ public class InvalidDescriptionException extends ValidationException {
     public InvalidDescriptionException() {
         super();
     }
+
+    public InvalidDescriptionException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

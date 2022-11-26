@@ -21,5 +21,4 @@ public interface UserStorage {
 
     void validateUser(User user);
 
-    int generateId();
 }

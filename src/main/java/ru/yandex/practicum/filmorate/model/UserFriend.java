@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class UserFriend {
-    private int userId;
+    private int id;
     private int friendId;
 }

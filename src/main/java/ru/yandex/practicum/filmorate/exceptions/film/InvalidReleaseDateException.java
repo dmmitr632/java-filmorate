@@ -10,4 +10,8 @@ public class InvalidReleaseDateException extends ValidationException {
     public InvalidReleaseDateException() {
         super();
     }
+
+    public InvalidReleaseDateException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

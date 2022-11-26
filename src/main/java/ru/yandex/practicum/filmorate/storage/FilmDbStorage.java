@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidDescriptionException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidIdOfFilmException;
+import ru.yandex.practicum.filmorate.exceptions.film.InvalidMpaRatingException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidNameException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidReleaseDateException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
@@ -35,12 +36,19 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        return null;
+        {
+            String query = "INSERT INTO films(name, description, release_date, duration) VALUES(?, ?, ?, ?)";
+            jdbcTemplate.update(query, film.getName(), film.getDescription(), film.getReleaseDate(),
+                    film.getDuration());
+        }
+        return film;
     }
 
     @Override
     public Film editFilm(Film film) {
-        return null;
+        String query = "MERGE INTO films(name, description, release_date, duration) VALUES(?, ?, ?, ?)";
+        jdbcTemplate.update(query, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration());
+        return film;
     }
 
     @Override
@@ -60,14 +68,16 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private HashSet<Genre> getGenreForFilmByFilmId(long filmId) {
-        String query = "SELECT * FROM genres WHERE genre_id IN (SELECT genre_id FROM films_genres WHERE film_id = ?)";
+        String query = "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM films_genres WHERE id = ?)";
         return new HashSet<Genre>(jdbcTemplate.query(query, new GenreMapper(), filmId));
     }
 
     private FilmMpaRating getMpaRating(long ratingId) {
         //String query = "SELECT rating_name FROM mpa_rating WHERE mpa_rating_id = ?";
-        String query = "SELECT * FROM films f, mpa_rating m where f.MPA_RATING_ID = m.MPA_RATING_ID AND FILM_ID = ?";
-        return jdbcTemplate.query(query, new MpaRatingMapper(), ratingId).get(0);
+        String query = "SELECT * FROM films f, mpa m WHERE f.mpa_id = m.id AND id = ?";
+        //return jdbcTemplate.query(query, new MpaRatingMapper(), ratingId).get(0);
+        return jdbcTemplate.query(query, new MpaRatingMapper(), ratingId).stream().findAny()
+                .orElseThrow(InvalidMpaRatingException::new);
     }
 
     @Override
@@ -82,13 +92,16 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(int filmId) {
-        return null;
+        String query = "SELECT * FROM films WHERE id = ?";
+        //return jdbcTemplate.query(query, new FilmMapper(), filmId).get(0);
+        return jdbcTemplate.query(query, new FilmMapper(), filmId).stream().findAny()
+                .orElseThrow(() -> new InvalidIdOfFilmException("Фильма с id " + filmId + "не существует"));
     }
 
     @Override
     public void validateFilm(Film film) {
         if (film.getId() < 0) {
-            throw new InvalidIdOfFilmException();
+            throw new InvalidIdOfFilmException("id < 0");
         }
 
         if (film.getName().equals("")) {
@@ -105,10 +118,5 @@ public class FilmDbStorage implements FilmStorage {
             log.info("Wrong film date (before 1895-12-28) {}", film.getReleaseDate());
             throw new InvalidReleaseDateException("Film releaseDate before 1895-12-28");
         }
-    }
-
-    @Override
-    public int generateId() {
-        return 0;
     }
 }

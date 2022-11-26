@@ -105,7 +105,6 @@ public class InMemoryUserStorage implements UserStorage {
         }
     }
 
-    @Override
     public int generateId() {
         this.id++;
         return this.id;

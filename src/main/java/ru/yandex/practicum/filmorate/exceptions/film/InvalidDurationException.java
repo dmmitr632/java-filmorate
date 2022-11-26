@@ -10,4 +10,8 @@ public class InvalidDurationException extends ValidationException {
     public InvalidDurationException() {
         super();
     }
+
+    public InvalidDurationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

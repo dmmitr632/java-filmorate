@@ -48,8 +48,4 @@ public class UserDbStorage implements UserStorage {
 
     }
 
-    @Override
-    public int generateId() {
-        return 0;
-    }
 }
