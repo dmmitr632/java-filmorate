@@ -1,9 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import lombok.extern.slf4j.Slf4j;
-import mapper.FilmMapper;
-import mapper.GenreMapper;
-import mapper.MpaRatingMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -11,6 +8,9 @@ import ru.yandex.practicum.filmorate.exceptions.film.InvalidDescriptionException
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidIdOfFilmException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidNameException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidReleaseDateException;
+import ru.yandex.practicum.filmorate.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.mapper.GenreMapper;
+import ru.yandex.practicum.filmorate.mapper.MpaRatingMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FilmMpaRating;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -45,30 +45,29 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> viewAllFilms() {
-        String sqlQuery = ("SELECT * FROM films");
+        String query = ("SELECT * FROM films");
         log.info("Отображаем все фильмы");
-        List<Film> films = jdbcTemplate.query(sqlQuery, new FilmMapper());
-
+        List<Film> films = jdbcTemplate.query(query, new FilmMapper());
+        System.out.println(films);
         for (Film film : films) {
             FilmMpaRating rating = this.getMpaRating(film.getId());
             film.setFilmMpaRating(rating);
             HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
             film.setFilmGenres(genres);
+            System.out.println(film);
         }
         return films;
     }
 
     private HashSet<Genre> getGenreForFilmByFilmId(long filmId) {
         String query = "SELECT * FROM genres WHERE genre_id IN (SELECT genre_id FROM films_genres WHERE film_id = ?)";
-        return (HashSet<Genre>) jdbcTemplate.query(query, new GenreMapper(), filmId);
+        return new HashSet<Genre>(jdbcTemplate.query(query, new GenreMapper(), filmId));
     }
 
     private FilmMpaRating getMpaRating(long ratingId) {
-        String query = "SELECT rating_name FROM mpa_rating WHERE mpa_rating_id = ?";
-        //select * from FILMS f, MPA m
-        // where f.MPA_ID = m.MPA_ID
-        //   AND FILM_ID = ?
-        return (FilmMpaRating) jdbcTemplate.query(query, new MpaRatingMapper(), ratingId);
+        //String query = "SELECT rating_name FROM mpa_rating WHERE mpa_rating_id = ?";
+        String query = "SELECT * FROM films f, mpa_rating m where f.MPA_RATING_ID = m.MPA_RATING_ID AND FILM_ID = ?";
+        return jdbcTemplate.query(query, new MpaRatingMapper(), ratingId).get(0);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package mapper;
+package ru.yandex.practicum.filmorate.mapper;
 
 import org.springframework.jdbc.core.RowMapper;
 import ru.yandex.practicum.filmorate.model.User;
@@ -10,7 +10,7 @@ import java.time.LocalDate;
 public class UserMapper implements RowMapper<User> {
     @Override
     public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-        int id = rs.getInt("id");
+        int id = rs.getInt("user_id");
         String email = rs.getString("email");
         String login = rs.getString("login");
         String name = rs.getString("name");
