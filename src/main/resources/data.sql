@@ -132,23 +132,23 @@ WHERE films_users_liked.film_id = 1
 
 -- Добавляем жанры для фильмов
 MERGE
-INTO films_genres key (film_id, genre_id)
+INTO films_genres KEY (film_id, genre_id)
     VALUES (1, 3);
 
 MERGE
-INTO films_genres key (film_id, genre_id)
+INTO films_genres KEY (film_id, genre_id)
     VALUES (1, 2);
 
 MERGE
-INTO films_genres key (film_id, genre_id)
+INTO films_genres KEY (film_id, genre_id)
     VALUES (1, 6);
 
 MERGE
-INTO films_genres key (film_id, genre_id)
+INTO films_genres KEY (film_id, genre_id)
     VALUES (2, 1);
 
 MERGE
-INTO films_genres key (film_id, genre_id)
+INTO films_genres KEY (film_id, genre_id)
     VALUES (2, 4);
 
 -- Добавляем лайки для фильмов

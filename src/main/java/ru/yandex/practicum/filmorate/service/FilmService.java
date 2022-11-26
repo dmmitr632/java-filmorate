@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FilmLikesReversedComparator;
@@ -58,8 +57,6 @@ public class FilmService {
     public void deleteUserLikeOnFilm(Integer filmId, Integer userId) {
 
     }
-
-
 }
 
 

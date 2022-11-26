@@ -11,10 +11,10 @@ public class FilmMapper implements RowMapper<Film> {
     @Override
     public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
         int id = rs.getInt("id");
-        //FilmMpaRating filmMpaRating = rs.getString("");
         String name = rs.getString("name");
         String description = rs.getString("description");
         LocalDate releaseDate = rs.getDate("release_date").toLocalDate();
+        //LocalDate releaseDate = LocalDate.parse((rs.getString("release_date")));
         int duration = rs.getInt("duration");
         int rate = rs.getInt("rate");
 

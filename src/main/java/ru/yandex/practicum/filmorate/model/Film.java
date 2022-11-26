@@ -9,12 +9,12 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
+import java.util.HashSet;
 
 @Data
 @Builder
 public class Film {
     private int id;
-
     private FilmMpaRating filmMpaRating;
     @NotBlank
     @NotEmpty
@@ -30,9 +30,6 @@ public class Film {
     private int duration;
     @PositiveOrZero
     private int rate;
-
-    // private HashSet<FilmGenre> filmGenres;
+    private HashSet<Genre> filmGenres;
     // private Set<Integer> userIdsWhoLikedFilm;
-
-
 }

@@ -1,13 +1,11 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import mapper.FilmMapper;
+import mapper.GenreMapper;
+import mapper.MpaRatingMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidDescriptionException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidIdOfFilmException;
@@ -15,28 +13,21 @@ import ru.yandex.practicum.filmorate.exceptions.film.InvalidNameException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidReleaseDateException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FilmMpaRating;
+import ru.yandex.practicum.filmorate.model.Genre;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
 
 @Slf4j
 @Component
 @Qualifier("filmDb")
 public class FilmDbStorage implements FilmStorage {
-
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, Month.DECEMBER, 28);
-
     private final JdbcTemplate jdbcTemplate;
-
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -56,13 +47,38 @@ public class FilmDbStorage implements FilmStorage {
     public List<Film> viewAllFilms() {
         String sqlQuery = ("SELECT * FROM films");
         log.info("Отображаем все фильмы");
-        return jdbcTemplate.query(sqlQuery, new FilmMapper());
+        List<Film> films = jdbcTemplate.query(sqlQuery, new FilmMapper());
+
+        for (Film film : films) {
+            FilmMpaRating rating = this.getMpaRating(film.getId());
+            film.setFilmMpaRating(rating);
+            HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
+            film.setFilmGenres(genres);
+        }
+        return films;
     }
 
+    private HashSet<Genre> getGenreForFilmByFilmId(long filmId) {
+        String query = "SELECT * FROM genres WHERE genre_id IN (SELECT genre_id FROM films_genres WHERE film_id = ?)";
+        return (HashSet<Genre>) jdbcTemplate.query(query, new GenreMapper(), filmId);
+    }
+
+    private FilmMpaRating getMpaRating(long ratingId) {
+        String query = "SELECT rating_name FROM mpa_rating WHERE mpa_rating_id = ?";
+        //select * from FILMS f, MPA m
+        // where f.MPA_ID = m.MPA_ID
+        //   AND FILM_ID = ?
+        return (FilmMpaRating) jdbcTemplate.query(query, new MpaRatingMapper(), ratingId);
+    }
 
     @Override
     public Map<Integer, Film> getFilms() {
-        return null;
+        List<Film> films = this.viewAllFilms();
+        Map<Integer, Film> filmsMap = new HashMap<>();
+        for (Film film : films) {
+            filmsMap.put(film.getId(), film);
+        }
+        return filmsMap;
     }
 
     @Override

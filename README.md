@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS films_users_liked
 
 Код для заполнения тестовыми данными(примеры запросов) data.sql
 
-```postgresql
+```h2
 -- Добавляем рейтинги
 
 MERGE

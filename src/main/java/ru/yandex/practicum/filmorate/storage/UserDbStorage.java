@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -12,9 +11,7 @@ import java.util.Optional;
 
 @Component
 @Qualifier("userDb")
-public class UserDbStorage implements  UserStorage{
-
-
+public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
@@ -42,7 +39,7 @@ public class UserDbStorage implements  UserStorage{
     }
 
     @Override
-   public Optional<User> getUserById(int userId) {
+    public Optional<User> getUserById(int userId) {
         return null;
     }
 
