@@ -30,7 +30,7 @@ public class Film {
     private Integer duration;
     @PositiveOrZero
     private Integer rate;
-    private HashSet<Genre> filmGenres;
+    private HashSet<Genre> genres;
     // private Set<Integer> userIdsWhoLikedFilm;
 
     public int getMpaId() {

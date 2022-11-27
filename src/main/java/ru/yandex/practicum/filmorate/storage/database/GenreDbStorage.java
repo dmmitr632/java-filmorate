@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.database;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.mapper.GenreMapper;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 
@@ -19,11 +20,15 @@ public class GenreDbStorage implements GenreStorage {
 
     @Override
     public ArrayList<Genre> getAllGenres() {
-        return null;
+        String query = "SELECT * FROM genres";
+        return (ArrayList<Genre>) jdbcTemplate.query(query, new GenreMapper());
     }
 
     @Override
     public Genre getGenreById(int id) {
-        return null;
+        String query = "SELECT * FROM genres WHERE id = ?";
+        return jdbcTemplate.query(query, new GenreMapper(), id).stream().findAny()
+                .orElseThrow(() -> new RuntimeException("Жанр не найден"));
+
     }
 }

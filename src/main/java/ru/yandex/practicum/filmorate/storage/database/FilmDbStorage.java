@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidDescriptionException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidIdOfFilmException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidMpaRatingException;
@@ -19,6 +20,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
+import javax.validation.Valid;
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
 import java.time.Month;
@@ -38,7 +40,7 @@ public class FilmDbStorage implements FilmStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Film addFilm(Film film) {
+    public Film addFilm(@Valid @RequestBody Film film) {
         String query =
                 "INSERT INTO films (name, description, release_date, duration, mpa_id)" + " VALUES(?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -57,24 +59,25 @@ public class FilmDbStorage implements FilmStorage {
         film.setId(keyHolder.getKey().intValue());
         log.info("Film id {}", film.getId());
 
+        validateFilm(film);
         Mpa rating = this.getRating(film.getId());
         film.setMpa(rating);
 
         HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
-        film.setFilmGenres(genres);
+        film.setGenres(genres);
 
         return film;
     }
 
     @Override
-    public Film editFilm(Film film) {
+    public Film editFilm(@Valid @RequestBody Film film) {
         String query = "MERGE INTO films(id, name, description, release_date, duration, rate, mpa_id)" +
                 " VALUES(?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(query, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), film.getRate(), film.getMpaId());
 
         HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
-        film.setFilmGenres(genres);
+        film.setGenres(genres);
         return film;
     }
 
@@ -88,7 +91,7 @@ public class FilmDbStorage implements FilmStorage {
             Mpa rating = this.getRating(film.getId());
             film.setMpa(rating);
             HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
-            film.setFilmGenres(genres);
+            film.setGenres(genres);
             System.out.println(film);
         }
         return films;
@@ -128,7 +131,7 @@ public class FilmDbStorage implements FilmStorage {
         Mpa rating = this.getRating(film.getId());
         film.setMpa(rating);
         HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
-        film.setFilmGenres(genres);
+        film.setGenres(genres);
         return film;
     }
 

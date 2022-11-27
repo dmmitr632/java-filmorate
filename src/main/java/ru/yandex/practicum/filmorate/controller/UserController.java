@@ -32,12 +32,12 @@ public class UserController {
     }
 
     @PostMapping
-    public Optional<User> addUser(@Valid @RequestBody User user) {
+    public User addUser(@Valid @RequestBody User user) {
         return userService.addUser(user);
     }
 
     @PutMapping
-    public Optional<User> editUser(@Valid @RequestBody User user) {
+    public User editUser(@Valid @RequestBody User user) {
         return userService.editUser(user);
     }
 
@@ -47,7 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Optional<User> viewUserByID(@PathVariable int id) {
+    public User viewUserByID(@PathVariable int id) {
         return userService.getUserById(id);
     }
 

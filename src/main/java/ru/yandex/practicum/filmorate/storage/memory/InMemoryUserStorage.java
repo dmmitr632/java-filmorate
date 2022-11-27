@@ -30,7 +30,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     @PostMapping
-    public Optional<User> addUser(@Valid @RequestBody User user) {
+    public User addUser(@Valid @RequestBody User user) {
         log.info("Trying to add User with id {}, user.toString {} ", user.getId(), user);
         validateUser(user);
         for (User otherUser : users.values()) {
@@ -43,19 +43,19 @@ public class InMemoryUserStorage implements UserStorage {
         }
         users.put(user.getId(), user);
         log.info("Added User with id {}, user.toString {} ", user.getId(), user);
-        return Optional.of(user);
+        return user;
     }
 
     @Override
     @PutMapping
-    public Optional<User> editUser(@Valid @RequestBody User user) {
+    public User editUser(@Valid @RequestBody User user) {
         log.info("Trying to edit User with id {}, user.toString {} ", user.getId(), user);
         validateUser(user);
         for (User userEdited : users.values()) {
             if (userEdited.getId() == user.getId()) {
                 users.replace(userEdited.getId(), user);
                 log.info("Edited User with id {}, user.toString {} ", user.getId(), user);
-                return Optional.of(user);
+                return user;
             }
         }
         throw new InvalidIdOfUserException();
@@ -75,14 +75,14 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public Optional<User> getUserById(int userId) {
+    public User getUserById(int userId) {
 
         if (!users.containsKey(userId)) {
             throw new InvalidIdOfUserException();
         }
 
         log.info("User by id {}, {}", userId, this.users.get(userId));
-        return Optional.of(this.users.get(userId));
+        return this.users.get(userId);
     }
 
     @Override

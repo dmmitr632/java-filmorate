@@ -67,15 +67,15 @@ public class UserService {
         return null;
     }
 
-    public Optional<User> getUserById(int userId) {
+    public User getUserById(int userId) {
         return userStorage.getUserById(userId);
     }
 
-    public Optional<User> addUser(@Valid @RequestBody User user) {
+    public User addUser(@Valid @RequestBody User user) {
         return userStorage.addUser(user);
     }
 
-    public Optional<User> editUser(@Valid @RequestBody User user) {
+    public User editUser(@Valid @RequestBody User user) {
         return userStorage.editUser(user);
     }
 
