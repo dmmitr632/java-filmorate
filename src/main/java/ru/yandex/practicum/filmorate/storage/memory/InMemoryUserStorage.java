@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.memory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.exceptions.user.InvalidBirthdayException;
 import ru.yandex.practicum.filmorate.exceptions.user.InvalidIdOfUserException;
 import ru.yandex.practicum.filmorate.exceptions.user.InvalidLoginException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.Valid;
 import java.time.Instant;
