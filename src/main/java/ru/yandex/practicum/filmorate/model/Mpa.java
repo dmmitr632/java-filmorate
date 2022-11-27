@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class FilmMpaRating {
+public class Mpa {
     //G — у фильма нет возрастных ограничений,
     //PG — детям рекомендуется смотреть фильм с родителями,
     //PG-13 — детям до 13 лет просмотр не желателен,

@@ -15,7 +15,7 @@ import java.util.HashSet;
 @Builder
 public class Film {
     private Integer id;
-    private FilmMpaRating filmMpaRating;
+    private Mpa mpa;
     @NotBlank
     @NotEmpty
     private String name;

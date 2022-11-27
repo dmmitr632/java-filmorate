@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.database;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -13,10 +14,10 @@ import ru.yandex.practicum.filmorate.exceptions.film.InvalidNameException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidReleaseDateException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.mapper.GenreMapper;
-import ru.yandex.practicum.filmorate.mapper.MpaRatingMapper;
+import ru.yandex.practicum.filmorate.mapper.MpaMapper;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.FilmMpaRating;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.PreparedStatement;
@@ -49,9 +50,9 @@ public class FilmDbStorage implements FilmStorage {
     //    }
 
     public Film addFilm(Film film) {
-        String query = "INSERT INTO films (name, description, release_date, duration, mpa_id) VALUES(?, ?, ?, ?, ?)";
+        String query = "INSERT INTO films (name, description, release_date, duration) VALUES(?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        int mpa_id = 0;
+
         jdbcTemplate.update(connection -> {
             PreparedStatement stmt = connection.prepareStatement(query, new String[]{"id"});
 
@@ -59,17 +60,16 @@ public class FilmDbStorage implements FilmStorage {
             stmt.setString(2, film.getDescription());
             stmt.setObject(3, film.getReleaseDate());
             stmt.setInt(4, film.getDuration());
-            stmt.setInt(5, mpa_id);
             return stmt;
         }, keyHolder);
-//
-        film.setId((keyHolder.getKey().intValue()));
-        String queryMpa = "INSERT INTO films(mpa_id) VALUES (?)";
-        jdbcTemplate.update(queryMpa, this.getMpa(film.getId()));
+        //
+        film.setId(keyHolder.getKey().intValue());
+        log.info("Film id {}", film.getId());
+        //String queryMpa = "INSERT INTO films(mpa_id) VALUES (?)";
+        log.info("Bla bla {}", this.getRating(film.getId()));
+        //jdbcTemplate.update(queryMpa, this.getRating(film.getId()));
         return film;
     }
-
-
 
     @Override
     public Film editFilm(Film film) {
@@ -85,8 +85,8 @@ public class FilmDbStorage implements FilmStorage {
         List<Film> films = jdbcTemplate.query(query, new FilmMapper());
         //System.out.println(films);
         for (Film film : films) {
-            FilmMpaRating rating = this.getMpa(film.getId());
-            film.setFilmMpaRating(rating);
+            Mpa rating = this.getRating(film.getId());
+            film.setMpa(rating);
             HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
             film.setFilmGenres(genres);
             System.out.println(film);
@@ -101,13 +101,48 @@ public class FilmDbStorage implements FilmStorage {
         return genres;
     }
 
-    private FilmMpaRating getMpa(int id) {
+    private Mpa getRating(int id) {
 
         String query = "SELECT * FROM mpa WHERE mpa.id IN(SELECT mpa_id FROM films WHERE id = ?)";
-
-        return jdbcTemplate.query(query, new MpaRatingMapper(), id).stream().findAny()
-                .orElseThrow(() -> new InvalidMpaRatingException("Неверный рейтинг"));
+        return jdbcTemplate.query(query, new MpaMapper(), id).stream().findAny()
+                .orElseThrow(() -> new InvalidMpaRatingException("Неверный рейтинг для id" + id));
     }
+
+
+
+//    private Mpa getRating(int id) {
+//
+//        //String query = "SELECT * FROM mpa WHERE mpa.id IN(SELECT mpa_id FROM films WHERE id = ?)";
+//
+//        //        String sqlQuery = "insert into books (title) values (?)";
+//        //
+//        //        KeyHolder keyHolder = new GeneratedKeyHolder();
+//        //        jdbcTemplate.update(connection -> {
+//        //            PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"id"});
+//        //            stmt.setString(1, "Гарри Поттер и Принц Полукровка");
+//        //            return stmt;
+//        //        }, keyHolder);
+//        //
+//        //        long bookId = keyHolder.getKey().longValue();
+//        //        System.out.println(bookId);
+//
+////        String query = "SELECT mpa_id FROM films WHERE id = ?";
+////        KeyHolder keyHolder = new GeneratedKeyHolder();
+////        jdbcTemplate.update(connection -> {
+////                        PreparedStatement stmt = connection.prepareStatement(query, new String[]{"id"});
+////                        stmt.setString(1, "Гарри Поттер и Принц Полукровка");
+////                        return stmt;
+////                    }, keyHolder);
+//
+//
+//
+//        return jdbcTemplate.query(query, new MpaMapper(), id).stream().findAny()
+//                .orElseThrow(() -> new InvalidMpaRatingException("Неверный рейтинг для id" + id));
+//    }
+
+
+//public Integer getMpaId
+
 
     @Override
     public Map<Integer, Film> getFilms() {
