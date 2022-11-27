@@ -14,7 +14,7 @@ import java.util.HashSet;
 @Data
 @Builder
 public class Film {
-    private int id;
+    private Integer id;
     private FilmMpaRating filmMpaRating;
     @NotBlank
     @NotEmpty
@@ -27,9 +27,9 @@ public class Film {
     private LocalDate releaseDate;
     @NotNull
     @PositiveOrZero
-    private int duration;
+    private Integer duration;
     @PositiveOrZero
-    private int rate;
+    private Integer rate;
     private HashSet<Genre> filmGenres;
     // private Set<Integer> userIdsWhoLikedFilm;
 }

@@ -12,6 +12,6 @@ public class Genre {
     //    Thriller,
     //    Documentary,
     //    Action
-    private int id;
+    private Integer id;
     private String name;
 }

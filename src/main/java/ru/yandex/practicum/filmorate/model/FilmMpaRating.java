@@ -16,6 +16,6 @@ public class FilmMpaRating {
     //    PG_13,
     //    R,
     //    NC_17
-    private int id;
+    private Integer id;
     private String name;
 }
