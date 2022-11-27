@@ -21,6 +21,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.sql.PreparedStatement;
 import java.time.LocalDate;
 import java.time.Month;
@@ -155,5 +156,13 @@ public class FilmDbStorage implements FilmStorage {
             log.info("Wrong film date (before 1895-12-28) {}", film.getReleaseDate());
             throw new InvalidReleaseDateException("Film releaseDate before 1895-12-28");
         }
+
+        if (film.getDuration() < 0) {
+            throw new ValidationException("Duration of film is less than zero");
+        }
+        if (film.getMpa() == null) {
+            throw new ValidationException("Film lacks Mpa rating");
+        }
     }
+
 }
