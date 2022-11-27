@@ -60,13 +60,13 @@ public class FilmDbStorage implements FilmStorage {
         film.setId(keyHolder.getKey().intValue());
         log.info("Film id {}", film.getId());
 
-        validateFilm(film);
+
         Mpa rating = this.getRating(film.getId());
         film.setMpa(rating);
 
         HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
         film.setGenres(genres);
-
+        validateFilm(film);
         return film;
     }
 
@@ -79,6 +79,7 @@ public class FilmDbStorage implements FilmStorage {
 
         HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
         film.setGenres(genres);
+        validateFilm(film);
         return film;
     }
 
@@ -87,7 +88,6 @@ public class FilmDbStorage implements FilmStorage {
         String query = ("SELECT * FROM films");
         log.info("Отображаем все фильмы");
         List<Film> films = jdbcTemplate.query(query, new FilmMapper());
-        //System.out.println(films);
         for (Film film : films) {
             Mpa rating = this.getRating(film.getId());
             film.setMpa(rating);
@@ -100,9 +100,7 @@ public class FilmDbStorage implements FilmStorage {
 
     private HashSet<Genre> getGenreForFilmByFilmId(int filmId) {
         String query = "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM films_genres WHERE id = ?)";
-        HashSet<Genre> genres = new HashSet<Genre>(jdbcTemplate.query(query, new GenreMapper(), filmId));
-        //System.out.println(genres);
-        return genres;
+        return new HashSet<Genre>(jdbcTemplate.query(query, new GenreMapper(), filmId));
     }
 
     private Mpa getRating(int id) {
