@@ -50,7 +50,8 @@ public class FilmDbStorage implements FilmStorage {
     //    }
 
     public Film addFilm(Film film) {
-        String query = "INSERT INTO films (name, description, release_date, duration) VALUES(?, ?, ?, ?)";
+        String query = "INSERT INTO films (name, description, release_date, duration, mpa_id)" +
+                " VALUES(?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -60,13 +61,22 @@ public class FilmDbStorage implements FilmStorage {
             stmt.setString(2, film.getDescription());
             stmt.setObject(3, film.getReleaseDate());
             stmt.setInt(4, film.getDuration());
+            stmt.setInt(5, film.getMpaId());
             return stmt;
         }, keyHolder);
         //
         film.setId(keyHolder.getKey().intValue());
         log.info("Film id {}", film.getId());
-        //String queryMpa = "INSERT INTO films(mpa_id) VALUES (?)";
-        log.info("Bla bla {}", this.getRating(film.getId()));
+
+        Mpa rating = this.getRating(film.getId());
+        film.setMpa(rating);
+
+
+        HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
+        film.setFilmGenres(genres);
+
+
+
         //jdbcTemplate.update(queryMpa, this.getRating(film.getId()));
         return film;
     }
@@ -97,7 +107,7 @@ public class FilmDbStorage implements FilmStorage {
     private HashSet<Genre> getGenreForFilmByFilmId(int filmId) {
         String query = "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM films_genres WHERE id = ?)";
         HashSet<Genre> genres = new HashSet<Genre>(jdbcTemplate.query(query, new GenreMapper(), filmId));
-        System.out.println(genres);
+        //System.out.println(genres);
         return genres;
     }
 

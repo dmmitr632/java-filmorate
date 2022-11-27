@@ -32,4 +32,8 @@ public class Film {
     private Integer rate;
     private HashSet<Genre> filmGenres;
     // private Set<Integer> userIdsWhoLikedFilm;
+
+    public int getMpaId() {
+        return mpa.getId();
+    }
 }
