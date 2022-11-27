@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.database;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -39,19 +38,9 @@ public class FilmDbStorage implements FilmStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    //    @Override
-    //    public Film addFilm(Film film) {
-    //        {
-    //            String query = "INSERT INTO films(name, description, release_date, duration) VALUES(?, ?, ?, ?)";
-    //            jdbcTemplate.update(query, film.getName(), film.getDescription(), film.getReleaseDate(),
-    //                    film.getDuration());
-    //        }
-    //        return film;
-    //    }
-
     public Film addFilm(Film film) {
-        String query = "INSERT INTO films (name, description, release_date, duration, mpa_id)" +
-                " VALUES(?, ?, ?, ?, ?)";
+        String query =
+                "INSERT INTO films (name, description, release_date, duration, mpa_id)" + " VALUES(?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -71,20 +60,21 @@ public class FilmDbStorage implements FilmStorage {
         Mpa rating = this.getRating(film.getId());
         film.setMpa(rating);
 
-
         HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
         film.setFilmGenres(genres);
 
-
-
-        //jdbcTemplate.update(queryMpa, this.getRating(film.getId()));
         return film;
     }
 
     @Override
     public Film editFilm(Film film) {
-        String query = "MERGE INTO films(name, description, release_date, duration) VALUES(?, ?, ?, ?)";
-        jdbcTemplate.update(query, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration());
+        String query = "MERGE INTO films(id, name, description, release_date, duration, rate, mpa_id)" +
+                " VALUES(?, ?, ?, ?, ?, ?, ?)";
+        jdbcTemplate.update(query, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
+                film.getDuration(), film.getRate(), film.getMpaId());
+
+        HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
+        film.setFilmGenres(genres);
         return film;
     }
 
@@ -118,42 +108,6 @@ public class FilmDbStorage implements FilmStorage {
                 .orElseThrow(() -> new InvalidMpaRatingException("Неверный рейтинг для id" + id));
     }
 
-
-
-//    private Mpa getRating(int id) {
-//
-//        //String query = "SELECT * FROM mpa WHERE mpa.id IN(SELECT mpa_id FROM films WHERE id = ?)";
-//
-//        //        String sqlQuery = "insert into books (title) values (?)";
-//        //
-//        //        KeyHolder keyHolder = new GeneratedKeyHolder();
-//        //        jdbcTemplate.update(connection -> {
-//        //            PreparedStatement stmt = connection.prepareStatement(sqlQuery, new String[]{"id"});
-//        //            stmt.setString(1, "Гарри Поттер и Принц Полукровка");
-//        //            return stmt;
-//        //        }, keyHolder);
-//        //
-//        //        long bookId = keyHolder.getKey().longValue();
-//        //        System.out.println(bookId);
-//
-////        String query = "SELECT mpa_id FROM films WHERE id = ?";
-////        KeyHolder keyHolder = new GeneratedKeyHolder();
-////        jdbcTemplate.update(connection -> {
-////                        PreparedStatement stmt = connection.prepareStatement(query, new String[]{"id"});
-////                        stmt.setString(1, "Гарри Поттер и Принц Полукровка");
-////                        return stmt;
-////                    }, keyHolder);
-//
-//
-//
-//        return jdbcTemplate.query(query, new MpaMapper(), id).stream().findAny()
-//                .orElseThrow(() -> new InvalidMpaRatingException("Неверный рейтинг для id" + id));
-//    }
-
-
-//public Integer getMpaId
-
-
     @Override
     public Map<Integer, Film> getFilms() {
         List<Film> films = this.viewAllFilms();
@@ -167,9 +121,15 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film getFilmById(int filmId) {
         String query = "SELECT * FROM films WHERE id = ?";
-        //return jdbcTemplate.query(query, new FilmMapper(), filmId).get(0);
-        return jdbcTemplate.query(query, new FilmMapper(), filmId).stream().findAny()
+
+        Film film = jdbcTemplate.query(query, new FilmMapper(), filmId).stream().findAny()
                 .orElseThrow(() -> new InvalidIdOfFilmException("Фильма с id " + filmId + "не существует"));
+
+        Mpa rating = this.getRating(film.getId());
+        film.setMpa(rating);
+        HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
+        film.setFilmGenres(genres);
+        return film;
     }
 
     @Override
