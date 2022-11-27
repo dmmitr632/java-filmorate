@@ -1,3 +1,19 @@
+DELETE
+FROM films;
+DELETE
+FROM films_genres;
+DELETE
+FROM users_friends;
+DELETE
+FROM films;
+DELETE
+FROM users;
+ALTER TABLE films
+    ALTER COLUMN id RESTART WITH 1;
+ALTER TABLE users
+    ALTER COLUMN id RESTART WITH 1;
+
+
 CREATE TABLE IF NOT EXISTS mpa
 (
     id   int PRIMARY KEY,
