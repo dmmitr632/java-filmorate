@@ -18,10 +18,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ru.yandex.practicum.filmorate.Constants.CINEMA_BIRTHDAY;
+import static ru.yandex.practicum.filmorate.Constants.MAX_DESCRIPTION_LENGTH;
+
 @Component
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
-    private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, Month.DECEMBER, 28);
+
     private final Map<Integer, Film> films = new HashMap<>();
     private int id;
 
@@ -90,7 +93,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new InvalidNameException("film lacks name");
         }
 
-        if (film.getDescription().length() > 200) {
+        if (film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
             log.info("Too long film description, {} chars", film.getDescription().length());
             throw new InvalidDescriptionException("too long film description");
         }
@@ -99,6 +102,11 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.info("Wrong film date (before 1895-12-28) {}", film.getReleaseDate());
             throw new InvalidReleaseDateException("Film releaseDate before 1895-12-28");
         }
+    }
+
+    @Override
+    public void deleteFilm(int id) {
+
     }
 
     public int generateId() {

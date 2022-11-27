@@ -7,6 +7,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidDescriptionException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidIdOfFilmException;
 import ru.yandex.practicum.filmorate.exceptions.film.InvalidMpaRatingException;
@@ -23,25 +24,32 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 import java.sql.PreparedStatement;
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import static ru.yandex.practicum.filmorate.Constants.CINEMA_BIRTHDAY;
+import static ru.yandex.practicum.filmorate.Constants.MAX_DESCRIPTION_LENGTH;
+
 @Slf4j
 @Component
 @Qualifier("filmDb")
 public class FilmDbStorage implements FilmStorage {
-    private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, Month.DECEMBER, 28);
     private final JdbcTemplate jdbcTemplate;
 
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Film addFilm(@Valid @RequestBody Film film) {
+    public Film addFilm(@Valid @RequestBody Film film) throws ValidationException {
+
+        if (film.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
+            throw new ValidationException("Date before " + CINEMA_BIRTHDAY);
+        }
+        //        validateFilm(film); - не работает
+        // TODO: понять в чем дело
+
         String query =
                 "INSERT INTO films (name, description, release_date, duration, mpa_id)" + " VALUES(?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -56,30 +64,32 @@ public class FilmDbStorage implements FilmStorage {
             stmt.setInt(5, film.getMpaId());
             return stmt;
         }, keyHolder);
-        //
+
         film.setId(keyHolder.getKey().intValue());
-        log.info("Film id {}", film.getId());
-
-
         Mpa rating = this.getRating(film.getId());
         film.setMpa(rating);
-
         HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
         film.setGenres(genres);
         validateFilm(film);
+
         return film;
     }
 
     @Override
-    public Film editFilm(@Valid @RequestBody Film film) {
+    public Film editFilm(@Valid @RequestBody Film film) throws ValidationException, NotFoundException {
+        validateFilm(film);
+
         String query = "MERGE INTO films(id, name, description, release_date, duration, rate, mpa_id)" +
                 " VALUES(?, ?, ?, ?, ?, ?, ?)";
+        checkIfFilmIdPresent(film.getId());
+
         jdbcTemplate.update(query, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), film.getRate(), film.getMpaId());
 
+        validateFilm(film);
         HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
         film.setGenres(genres);
-        validateFilm(film);
+
         return film;
     }
 
@@ -125,7 +135,7 @@ public class FilmDbStorage implements FilmStorage {
         String query = "SELECT * FROM films WHERE id = ?";
 
         Film film = jdbcTemplate.query(query, new FilmMapper(), filmId).stream().findAny()
-                .orElseThrow(() -> new InvalidIdOfFilmException("Фильма с id " + filmId + "не существует"));
+                .orElseThrow(() -> new InvalidIdOfFilmException("Film with id " + filmId + "doesn't exist"));
 
         Mpa rating = this.getRating(film.getId());
         film.setMpa(rating);
@@ -145,7 +155,7 @@ public class FilmDbStorage implements FilmStorage {
             throw new InvalidNameException("film lacks name");
         }
 
-        if (film.getDescription().length() > 200) {
+        if (film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
             log.info("Too long film description, {} chars", film.getDescription().length());
             throw new InvalidDescriptionException("too long film description");
         }
@@ -163,4 +173,15 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
+    public void deleteFilm(int id) {
+        checkIfFilmIdPresent(id);
+        String query = "DELETE FROM films WHERE id = ?";
+        jdbcTemplate.update(query, id);
+    }
+
+    private void checkIfFilmIdPresent(int id) throws NotFoundException {
+        String query = "SELECT * FROM films WHERE id = ?";
+        Film film = jdbcTemplate.query(query, new FilmMapper(), id).stream().findAny()
+                .orElseThrow(() -> new NotFoundException(("Film not found")));
+    }
 }
