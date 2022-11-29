@@ -101,10 +101,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         }
     }
 
-    @Override
-    public void deleteFilm(int id) {
-
-    }
+//    @Override
+//    public void deleteFilm(int id) {
+//
+//    }
 
     public int generateId() {
         this.id++;
