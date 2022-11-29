@@ -10,6 +10,6 @@ public class ErrorResponse {
     }
 
     public String getError() {
-        return error + " " +  description;
+        return error + " " + description;
     }
 }

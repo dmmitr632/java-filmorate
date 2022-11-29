@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public interface UserStorage {
     User addUser(@Valid @RequestBody User user);
@@ -20,5 +19,4 @@ public interface UserStorage {
     User getUserById(@Valid int userId);
 
     void validateUser(User user);
-
 }

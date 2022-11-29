@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.GenreService;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.service.GenreService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -41,5 +39,4 @@ public class GenreController {
     public List<Genre> viewAllGenres() {
         return genreService.viewAllGenres();
     }
-
 }

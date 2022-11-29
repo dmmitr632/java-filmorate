@@ -10,9 +10,7 @@ import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.user.InvalidBirthdayException;
 import ru.yandex.practicum.filmorate.exceptions.user.InvalidIdOfUserException;
 import ru.yandex.practicum.filmorate.exceptions.user.InvalidLoginException;
-import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -23,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 @Component
 @Slf4j
@@ -83,7 +80,7 @@ public class UserDbStorage implements UserStorage {
     public Map<Integer, User> getUsers() {
         List<User> users = this.viewAllUsers();
         Map<Integer, User> usersMap = new HashMap<>();
-        for (User user: users) {
+        for (User user : users) {
             usersMap.put(user.getId(), user);
         }
         return usersMap;
@@ -122,5 +119,4 @@ public class UserDbStorage implements UserStorage {
         jdbcTemplate.query(query, new UserMapper(), id).stream().findAny()
                 .orElseThrow(() -> new NotFoundException(("User not found")));
     }
-
 }

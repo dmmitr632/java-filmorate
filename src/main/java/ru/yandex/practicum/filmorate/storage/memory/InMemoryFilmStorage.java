@@ -11,8 +11,6 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +22,6 @@ import static ru.yandex.practicum.filmorate.Constants.MAX_DESCRIPTION_LENGTH;
 @Component
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
-
     private final Map<Integer, Film> films = new HashMap<>();
     private int id;
 

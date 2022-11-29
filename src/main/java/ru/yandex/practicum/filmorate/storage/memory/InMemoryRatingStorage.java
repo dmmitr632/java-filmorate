@@ -30,5 +30,4 @@ public class InMemoryRatingStorage implements MpaStorage {
     public Mpa getMpaById(int id) {
         return null;
     }
-
 }
