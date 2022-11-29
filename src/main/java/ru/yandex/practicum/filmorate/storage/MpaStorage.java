@@ -4,8 +4,10 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.util.List;
 
-public interface RatingStorage {
+public interface MpaStorage {
+    Mpa addMpa(Mpa mpa);
+    Mpa editMpa(Mpa mpa);
     List<Mpa> getMpaRatings();
 
-    Mpa getRatingById(int id);
+    Mpa getMpaById(int id);
 }

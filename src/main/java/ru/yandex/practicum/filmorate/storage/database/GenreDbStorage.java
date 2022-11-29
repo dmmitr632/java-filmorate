@@ -19,6 +19,16 @@ public class GenreDbStorage implements GenreStorage {
     }
 
     @Override
+    public Genre addGenre(Genre genre) {
+        return null;
+    }
+
+    @Override
+    public Genre editGenre(Genre genre) {
+        return null;
+    }
+
+    @Override
     public ArrayList<Genre> getAllGenres() {
         String query = "SELECT * FROM genres";
         return (ArrayList<Genre>) jdbcTemplate.query(query, new GenreMapper());

@@ -3,13 +3,23 @@ package ru.yandex.practicum.filmorate.storage.memory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.storage.RatingStorage;
+import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.util.List;
 
 @Component
 @Qualifier("InMemoryRatings")
-public class InMemoryRatingStorage implements RatingStorage {
+public class InMemoryRatingStorage implements MpaStorage {
+    @Override
+    public Mpa addMpa(Mpa mpa) {
+        return null;
+    }
+
+    @Override
+    public Mpa editMpa(Mpa mpa) {
+        return null;
+    }
+
     //TODO: заполнить
     @Override
     public List<Mpa> getMpaRatings() {
@@ -17,7 +27,8 @@ public class InMemoryRatingStorage implements RatingStorage {
     }
 
     @Override
-    public Mpa getRatingById(int id) {
+    public Mpa getMpaById(int id) {
         return null;
     }
+
 }

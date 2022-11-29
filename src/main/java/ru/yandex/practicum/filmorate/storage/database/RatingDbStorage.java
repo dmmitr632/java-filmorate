@@ -6,7 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.mapper.MpaMapper;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.storage.RatingStorage;
+import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 @Component
 @Qualifier("mpaDb")
-public class RatingDbStorage implements RatingStorage {
+public class RatingDbStorage implements MpaStorage {
     private JdbcTemplate jdbcTemplate;
 
     public RatingDbStorage(JdbcTemplate jdbcTemplate) {
@@ -22,10 +22,20 @@ public class RatingDbStorage implements RatingStorage {
     }
 
     @Override
-    public Mpa getRatingById(int id) {
+    public Mpa getMpaById(int id) {
         String query = "SELECT * FROM mpa WHERE id = ?";
         return jdbcTemplate.query(query, new MpaMapper(), id).stream().findAny()
                 .orElseThrow(() -> new RuntimeException("Рейтинга с" + id + " не существует"));
+    }
+
+    @Override
+    public Mpa addMpa(Mpa mpa) {
+        return null;
+    }
+
+    @Override
+    public Mpa editMpa(Mpa mpa) {
+        return null;
     }
 
     @Override
