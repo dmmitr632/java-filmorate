@@ -46,3 +46,5 @@ build/
 *.db
 db/*
 Untitled*.sql
+## !**/src/main/**/memory_old/
+!/src/main/java/ru/yandex/practicum/filmorate/storage/memory_old/

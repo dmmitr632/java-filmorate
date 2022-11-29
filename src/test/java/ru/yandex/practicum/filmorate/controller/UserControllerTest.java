@@ -9,7 +9,7 @@
 //import ru.yandex.practicum.filmorate.exceptions.user.InvalidLoginException;
 //import ru.yandex.practicum.filmorate.model.User;
 //import ru.yandex.practicum.filmorate.service.UserService;
-//import ru.yandex.practicum.filmorate.storage.memory.InMemoryUserStorage;
+//import ru.yandex.practicum.filmorate.storage.memory_old.InMemoryUserStorage;
 //
 //import java.time.LocalDate;
 //

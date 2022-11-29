@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.memory;
+package ru.yandex.practicum.filmorate.storage.memory_old;
 
 import ru.yandex.practicum.filmorate.storage.LikesOnFilmsStorage;
 
