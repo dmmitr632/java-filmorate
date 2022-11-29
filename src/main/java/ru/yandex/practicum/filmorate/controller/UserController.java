@@ -15,6 +15,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -61,7 +62,8 @@ public class UserController {
     }
 
     @GetMapping("{id}/friends")
-    public Set<User> viewAllFriendsOfUser(@PathVariable int id) {
+    public List<User> viewAllFriendsOfUser(@PathVariable int id) {
+
         return userService.getAllFriendsForUser(id);
     }
 

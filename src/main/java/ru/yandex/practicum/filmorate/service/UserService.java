@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.UserFriendStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,8 +64,8 @@ public class UserService {
         return new HashSet<>(userFriendStorage.getCommonFriends(user1Id, user2Id));
     }
 
-    public Set<User> getAllFriendsForUser(int userId) {
-        return new HashSet<>(userFriendStorage.getUserFriends(userId));
+    public List<User> getAllFriendsForUser(int userId) {
+        return new ArrayList<>(userFriendStorage.getUserFriends(userId));
     }
 }
 
