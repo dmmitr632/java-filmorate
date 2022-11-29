@@ -38,7 +38,9 @@ public class UserService {
     }
 
     public User addUser(@Valid @RequestBody User user) {
-        return userStorage.addUser(user);
+        user =  userStorage.addUser(user);
+        // System.out.println("User name " + user.getName());
+        return user;
     }
 
     public User editUser(@Valid @RequestBody User user) {
@@ -66,44 +68,3 @@ public class UserService {
     }
 }
 
-//    public void addToFriends(int user1Id, int user2Id) {
-//        //
-//        //        userStorage.getUserById(user1Id).addUsersInFriends(user2Id);
-//        //
-//        //        userStorage.getUserById(user2Id).addUsersInFriends(user1Id);
-//    }
-//
-//    public void removeFromFriends(int user1Id, int user2Id) {
-//
-//        //        if ((!userStorage.getUserById(user1Id).getUsersIdsInFriends().contains(user2Id)) ||
-//        //                (!userStorage.getUserById(user2Id).getUsersIdsInFriends().contains(user1Id))) {
-//        //            throw new InvalidIdOfUserException();
-//        //        }
-//        //
-//        //        userStorage.getUserById(user1Id).removeUsersInFriends(user2Id);
-//        //        userStorage.getUserById(user2Id).removeUsersInFriends(user1Id);
-//    }
-//
-//    public Set<User> getCommonFriends(int user1Id, int user2Id) {
-//
-//        //        Set<User> commonFriends = new HashSet<>();
-//        //        for (Integer friendId : userStorage.getUserById(user1Id).getUsersIdsInFriends()) {
-//        //            if (userStorage.getUserById(user2Id).getUsersIdsInFriends().contains(friendId)) {
-//        //                commonFriends.add(userStorage.getUserById(friendId));
-//        //            }
-//        //        }
-//        //        return commonFriends;
-//        return null;
-//    }
-//
-//    public Set<User> getAllFriendsForUser(int userId) {
-//        //
-//        //        Set<User> friendsOfUser = new HashSet<>();
-//        //        for (Integer friendId : userStorage.getUserById(userId).getUsersIdsInFriends()) {
-//        //
-//        //            friendsOfUser.add(userStorage.getUserById(friendId));
-//        //        }
-//
-//        //        return friendsOfUser;
-//        return null;
-//    }

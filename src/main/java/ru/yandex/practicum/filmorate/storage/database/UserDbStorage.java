@@ -6,14 +6,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.user.InvalidBirthdayException;
-import ru.yandex.practicum.filmorate.exceptions.user.InvalidIdOfUserException;
-import ru.yandex.practicum.filmorate.exceptions.user.InvalidLoginException;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import javax.validation.Valid;
 import java.sql.PreparedStatement;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -33,11 +33,11 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User addUser(User user) {
+    public User addUser(@Valid @RequestBody User user) {
 
         if (user.getBirthday().atStartOfDay(ZoneId.systemDefault()).toInstant().isAfter(Instant.now())) {
             log.info("Wrong birthday date {}", user.getBirthday());
-            throw new InvalidBirthdayException("Birthday in the future");
+            throw new ValidationException("Birthday in the future");
         }
         //аналогично, почему валидация не работает?
 
@@ -55,17 +55,23 @@ public class UserDbStorage implements UserStorage {
 
         user.setId(keyHolder.getKey().intValue());
         validateUser(user);
+        String querySetName = "UPDATE users SET name = ? WHERE id = ?";
+        jdbcTemplate.update(querySetName, user.getName(), user.getId());
+        // System.out.println(user.getName());
         return user;
     }
 
     @Override
-    public User editUser(User user) {
+    public User editUser(@Valid @RequestBody User user) {
         validateUser(user);
         String query = "MERGE INTO users(id, email, login, name, birthday)" + " VALUES(?, ?, ?, ?, ?)";
-        checkIfUserIdPresent(user.getId());
+        validateUserInDb(user.getId());
 
         jdbcTemplate.update(query, user.getId(), user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
-        checkIfUserIdPresent(user.getId());
+        validateUserInDb(user.getId());
+        String querySetName = "UPDATE users SET name = ? WHERE id = ?";
+        jdbcTemplate.update(querySetName, user.getName(), user.getId());
+        System.out.println(user.getName());
         return user;
     }
 
@@ -96,25 +102,26 @@ public class UserDbStorage implements UserStorage {
     @Override
     public void validateUser(User user) {
         if (user.getId() < 0) {
-            throw new InvalidIdOfUserException();
+            throw new ValidationException("wrong id");
         }
         if (user.getLogin().contains(" ") || Objects.equals(user.getLogin(), "")) {
             log.info("Wrong login {}", user.getLogin());
-            throw new InvalidLoginException("login contains spaces");
+            throw new ValidationException("login contains spaces");
         }
 
         if (user.getName() == null || Objects.equals(user.getName(), " ") || Objects.equals(user.getName(), "")) {
             user.setName(user.getLogin());
             log.info("Setting name to login {}", user.getLogin());
+            // throw new ValidationException("User lacks name");
         }
 
         if (user.getBirthday().atStartOfDay(ZoneId.systemDefault()).toInstant().isAfter(Instant.now())) {
             log.info("Wrong birthday date {}", user.getBirthday());
-            throw new InvalidBirthdayException("Birthday in the future");
+            throw new ValidationException("Birthday in the future");
         }
     }
 
-    private void checkIfUserIdPresent(int id) throws NotFoundException {
+    private void validateUserInDb(int id) throws NotFoundException {
         String query = "SELECT * FROM users WHERE id = ?";
         jdbcTemplate.query(query, new UserMapper(), id).stream().findAny()
                 .orElseThrow(() -> new NotFoundException(("User not found")));

@@ -16,7 +16,7 @@ import java.util.List;
 @Component
 @Qualifier("mpaDb")
 public class MpaDbStorage implements MpaStorage {
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public MpaDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -42,7 +42,6 @@ public class MpaDbStorage implements MpaStorage {
     @Override
     public List<Mpa> getMpaRatings() {
         String query = "SELECT * FROM mpa";
-        List<Mpa> ratings = new ArrayList<>(jdbcTemplate.query(query, new MpaMapper()));
-        return ratings;
+        return new ArrayList<>(jdbcTemplate.query(query, new MpaMapper()));
     }
 }

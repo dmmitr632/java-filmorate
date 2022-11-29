@@ -12,7 +12,7 @@ import java.util.ArrayList;
 @Component
 @Qualifier("genreDb")
 public class GenreDbStorage implements GenreStorage {
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     public GenreDbStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;

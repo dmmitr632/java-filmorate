@@ -8,11 +8,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.exceptions.film.InvalidDescriptionException;
-import ru.yandex.practicum.filmorate.exceptions.film.InvalidIdOfFilmException;
-import ru.yandex.practicum.filmorate.exceptions.film.InvalidMpaRatingException;
-import ru.yandex.practicum.filmorate.exceptions.film.InvalidNameException;
-import ru.yandex.practicum.filmorate.exceptions.film.InvalidReleaseDateException;
+import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.mapper.GenreMapper;
 import ru.yandex.practicum.filmorate.mapper.MpaMapper;
@@ -22,7 +18,6 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -80,7 +75,7 @@ public class FilmDbStorage implements FilmStorage {
 
         String query = "MERGE INTO films(id, name, description, release_date, duration, rate, mpa_id)" +
                 " VALUES(?, ?, ?, ?, ?, ?, ?)";
-        checkIfFilmIdPresent(film.getId());
+        validateFilmIdInDb(film.getId());
 
         jdbcTemplate.update(query, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), film.getRate(), film.getMpaId());
@@ -107,15 +102,16 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private HashSet<Genre> getGenreForFilmByFilmId(int filmId) {
+        validateFilmIdInDb(filmId);
         String query = "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM films_genres WHERE id = ?)";
         return new HashSet<Genre>(jdbcTemplate.query(query, new GenreMapper(), filmId));
     }
 
     private Mpa getRating(int id) {
-
+        validateFilmIdInDb(id);
         String query = "SELECT * FROM mpa WHERE mpa.id IN(SELECT mpa_id FROM films WHERE id = ?)";
         return jdbcTemplate.query(query, new MpaMapper(), id).stream().findAny()
-                .orElseThrow(() -> new InvalidMpaRatingException("Неверный рейтинг для id" + id));
+                .orElseThrow(() -> new ValidationException("Неверный рейтинг для id" + id));
     }
 
     @Override
@@ -130,10 +126,11 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(int filmId) {
+        validateFilmIdInDb(filmId);
         String query = "SELECT * FROM films WHERE id = ?";
 
         Film film = jdbcTemplate.query(query, new FilmMapper(), filmId).stream().findAny()
-                .orElseThrow(() -> new InvalidIdOfFilmException("Film with id " + filmId + "doesn't exist"));
+                .orElseThrow(() -> new NotFoundException("Film with id " + filmId + "doesn't exist"));
 
         Mpa rating = this.getRating(film.getId());
         film.setMpa(rating);
@@ -145,22 +142,22 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public void validateFilm(Film film) {
         if (film.getId() < 0) {
-            throw new InvalidIdOfFilmException("id < 0");
+            throw new ValidationException("id < 0");
         }
 
         if (film.getName().equals("")) {
             log.info("Empty film name {}", film.getName());
-            throw new InvalidNameException("film lacks name");
+            throw new ValidationException("film lacks name");
         }
 
         if (film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
             log.info("Too long film description, {} chars", film.getDescription().length());
-            throw new InvalidDescriptionException("too long film description");
+            throw new ValidationException("too long film description");
         }
 
         if (film.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
             log.info("Wrong film date (before 1895-12-28) {}", film.getReleaseDate());
-            throw new InvalidReleaseDateException("Film releaseDate before 1895-12-28");
+            throw new ValidationException("Film releaseDate before 1895-12-28");
         }
 
         if (film.getDuration() < 0) {
@@ -171,7 +168,7 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private void checkIfFilmIdPresent(int id) throws NotFoundException {
+    private void validateFilmIdInDb(int id) throws NotFoundException {
         String query = "SELECT * FROM films WHERE id = ?";
         jdbcTemplate.query(query, new FilmMapper(), id).stream().findAny()
                 .orElseThrow(() -> new NotFoundException(("Film not found")));
