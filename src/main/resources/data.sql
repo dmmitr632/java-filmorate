@@ -10,7 +10,7 @@ INTO mpa
 
 MERGE
 INTO mpa
-    VALUES (3, 'PG_13');
+    VALUES (3, 'PG-13');
 
 MERGE
 INTO mpa
@@ -18,7 +18,7 @@ INTO mpa
 
 MERGE
 INTO mpa
-    VALUES (5, 'NC_17');
+    VALUES (5, 'NC-17');
 
 -- Добавляем жанры фильмов
 
