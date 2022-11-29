@@ -24,27 +24,27 @@ INTO mpa
 
 MERGE
 INTO genres
-    VALUES (1, 'Comedy');
+    VALUES (1, 'Комедия');
 
 MERGE
 INTO genres
-    VALUES (2, 'Drama');
+    VALUES (2, 'Драма');
 
 MERGE
 INTO genres
-    VALUES (3, 'Cartoon');
+    VALUES (3, 'Мультфильм');
 
 MERGE
 INTO genres
-    VALUES (4, 'Thriller');
+    VALUES (4, 'Триллер');
 
 MERGE
 INTO genres
-    VALUES (5, 'Documentary');
+    VALUES (5, 'Документальный');
 
 MERGE
 INTO genres
-    VALUES (6, 'Action');
+    VALUES (6, 'Боевик');
 
 
 
