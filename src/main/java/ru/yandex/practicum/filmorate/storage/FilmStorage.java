@@ -20,7 +20,4 @@ public interface FilmStorage {
 
     void validateFilm(Film film);
 
-    void deleteFilm(int id);
-
-    //int generateId();
 }

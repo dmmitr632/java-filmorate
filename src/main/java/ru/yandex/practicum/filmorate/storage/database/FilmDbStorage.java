@@ -102,7 +102,6 @@ public class FilmDbStorage implements FilmStorage {
             film.setMpa(rating);
             HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
             film.setGenres(genres);
-            System.out.println(film);
         }
         return films;
     }
@@ -172,15 +171,9 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    public void deleteFilm(int id) {
-        checkIfFilmIdPresent(id);
-        String query = "DELETE FROM films WHERE id = ?";
-        jdbcTemplate.update(query, id);
-    }
-
     private void checkIfFilmIdPresent(int id) throws NotFoundException {
         String query = "SELECT * FROM films WHERE id = ?";
-        Film film = jdbcTemplate.query(query, new FilmMapper(), id).stream().findAny()
+        jdbcTemplate.query(query, new FilmMapper(), id).stream().findAny()
                 .orElseThrow(() -> new NotFoundException(("Film not found")));
     }
 }
