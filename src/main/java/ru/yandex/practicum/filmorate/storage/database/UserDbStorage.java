@@ -19,6 +19,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import java.sql.PreparedStatement;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -80,12 +81,19 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Map<Integer, User> getUsers() {
-        return null;
+        List<User> users = this.viewAllUsers();
+        Map<Integer, User> usersMap = new HashMap<>();
+        for (User user: users) {
+            usersMap.put(user.getId(), user);
+        }
+        return usersMap;
     }
 
     @Override
     public User getUserById(int userId) {
-        return null;
+        String query = "SELECT * FROM users WHERE id = ?";
+        return jdbcTemplate.query(query, new UserMapper(), userId).stream().findAny()
+                .orElseThrow(() -> new NotFoundException(("User not found")));
     }
 
     @Override
@@ -111,7 +119,7 @@ public class UserDbStorage implements UserStorage {
 
     private void checkIfUserIdPresent(int id) throws NotFoundException {
         String query = "SELECT * FROM users WHERE id = ?";
-        User user = jdbcTemplate.query(query, new UserMapper(), id).stream().findAny()
+        jdbcTemplate.query(query, new UserMapper(), id).stream().findAny()
                 .orElseThrow(() -> new NotFoundException(("User not found")));
     }
 
