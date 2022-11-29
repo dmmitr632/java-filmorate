@@ -17,14 +17,6 @@ public class MpaService {
         this.mpaStorage = mpaStorage;
     }
 
-    public Mpa addMpa(Mpa mpa) {
-        return mpaStorage.addMpa(mpa);
-    }
-
-    public Mpa editMpa(Mpa mpa) {
-        return mpaStorage.editMpa(mpa);
-    }
-
     public List<Mpa> viewAllMpas() {
         return mpaStorage.getMpaRatings();
     }
@@ -32,5 +24,4 @@ public class MpaService {
     public Mpa getMpaById(int id) {
         return mpaStorage.getMpaById(id);
     }
-
 }

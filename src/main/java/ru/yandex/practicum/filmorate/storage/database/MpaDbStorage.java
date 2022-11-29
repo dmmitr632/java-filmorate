@@ -30,16 +30,6 @@ public class MpaDbStorage implements MpaStorage {
     }
 
     @Override
-    public Mpa addMpa(Mpa mpa) {
-        return null;
-    }
-
-    @Override
-    public Mpa editMpa(Mpa mpa) {
-        return null;
-    }
-
-    @Override
     public List<Mpa> getMpaRatings() {
         String query = "SELECT * FROM mpa";
         return new ArrayList<>(jdbcTemplate.query(query, new MpaMapper()));

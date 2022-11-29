@@ -39,7 +39,7 @@ public class UserService {
     }
 
     public User addUser(@Valid @RequestBody User user) {
-        user =  userStorage.addUser(user);
+        user = userStorage.addUser(user);
         // System.out.println("User name " + user.getName());
         return user;
     }

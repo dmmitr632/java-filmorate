@@ -19,5 +19,4 @@ public interface FilmStorage {
     Film getFilmById(@Valid int filmId);
 
     void validateFilm(Film film);
-
 }

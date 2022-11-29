@@ -39,7 +39,7 @@ public class UserDbStorage implements UserStorage {
             log.info("Wrong birthday date {}", user.getBirthday());
             throw new ValidationException("Birthday in the future");
         }
-        //аналогично, почему валидация не работает?
+        //валидация ниже не работает?
 
         String query = "INSERT INTO users(email, login, name, birthday) VALUES (?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -71,7 +71,7 @@ public class UserDbStorage implements UserStorage {
         validateUserInDb(user.getId());
         String querySetName = "UPDATE users SET name = ? WHERE id = ?";
         jdbcTemplate.update(querySetName, user.getName(), user.getId());
-        System.out.println(user.getName());
+        // System.out.println(user.getName());
         return user;
     }
 

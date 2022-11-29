@@ -19,8 +19,8 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import javax.validation.Valid;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +42,15 @@ public class FilmDbStorage implements FilmStorage {
         if (film.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
             throw new ValidationException("Date before " + CINEMA_BIRTHDAY);
         }
-        //        validateFilm(film); - не работает
+        //Если не вызывать эту валидацию до validateFilm(), то почему-то фильм с неверной датой все равно добавляется,
+        // хотя выводится сообщение об ошибке
+        // TODO: понять в чем дело
+
+        if (film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
+            log.info("Too long film description, {} chars", film.getDescription().length());
+            throw new ValidationException("too long film description");
+        } //Если не вызывать эту валидацию до validateFilm(), то почему-то сбивается счетчик id, и тесты не проходятся
+        // (id 3 вместо 2).
         // TODO: понять в чем дело
 
         String query =
@@ -62,9 +70,11 @@ public class FilmDbStorage implements FilmStorage {
         film.setId(keyHolder.getKey().intValue());
         Mpa rating = this.getRating(film.getId());
         film.setMpa(rating);
-        HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
-        film.setGenres(genres);
         validateFilm(film);
+
+        // System.out.println("film.getGenres() " + film.getGenres());
+
+        this.addFilmGenre(film);
 
         return film;
     }
@@ -81,9 +91,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.getDuration(), film.getRate(), film.getMpaId());
 
         validateFilm(film);
-        HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
-        film.setGenres(genres);
-
+        this.addFilmGenre(film);
         return film;
     }
 
@@ -95,16 +103,16 @@ public class FilmDbStorage implements FilmStorage {
         for (Film film : films) {
             Mpa rating = this.getRating(film.getId());
             film.setMpa(rating);
-            HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
+            ArrayList<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
             film.setGenres(genres);
         }
         return films;
     }
 
-    private HashSet<Genre> getGenreForFilmByFilmId(int filmId) {
+    private ArrayList<Genre> getGenreForFilmByFilmId(int filmId) {
         validateFilmIdInDb(filmId);
         String query = "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM films_genres WHERE id = ?)";
-        return new HashSet<Genre>(jdbcTemplate.query(query, new GenreMapper(), filmId));
+        return (ArrayList<Genre>) jdbcTemplate.query(query, new GenreMapper(), filmId);
     }
 
     private Mpa getRating(int id) {
@@ -134,7 +142,7 @@ public class FilmDbStorage implements FilmStorage {
 
         Mpa rating = this.getRating(film.getId());
         film.setMpa(rating);
-        HashSet<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
+        ArrayList<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
         film.setGenres(genres);
         return film;
     }
@@ -172,5 +180,17 @@ public class FilmDbStorage implements FilmStorage {
         String query = "SELECT * FROM films WHERE id = ?";
         jdbcTemplate.query(query, new FilmMapper(), id).stream().findAny()
                 .orElseThrow(() -> new NotFoundException(("Film not found")));
+    }
+
+    private void addFilmGenre(Film film) {
+        String queryAddGenreFilm = "INSERT INTO films_genres(id, genre_id) VALUES (?, ?)";
+        if (film.getGenres() != null) {
+            List<Genre> genres = new ArrayList<>(film.getGenres());
+            for (Genre genre : genres) {
+                jdbcTemplate.update(queryAddGenreFilm, film.getId(), genre.getId());
+            }
+        } else {
+            jdbcTemplate.update(queryAddGenreFilm, film.getId(), null);
+        }
     }
 }

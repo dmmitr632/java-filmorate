@@ -1,3 +1,13 @@
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS films CASCADE;
+DROP TABLE IF EXISTS genres CASCADE;
+DROP TABLE IF EXISTS films_genres CASCADE;
+DROP TABLE IF EXISTS users_friends CASCADE;
+DROP TABLE IF EXISTS films_users_liked CASCADE;
+DROP TABLE IF EXISTS mpa CASCADE;
+
+
+
 CREATE TABLE IF NOT EXISTS mpa
 (
     id   int PRIMARY KEY,
@@ -33,7 +43,7 @@ CREATE TABLE IF NOT EXISTS genres
 CREATE TABLE IF NOT EXISTS films_genres
 (
     id       int NOT NULL,
-    genre_id int NOT NULL,
+    genre_id int,
     FOREIGN KEY (genre_id) REFERENCES genres (id),
     FOREIGN KEY (id) REFERENCES films (id),
     UNIQUE (id, genre_id)
@@ -61,23 +71,23 @@ CREATE TABLE IF NOT EXISTS users_friends
 CREATE TABLE IF NOT EXISTS films_users_liked
 (
     id      int NOT NULL,
-    user_id int NOT NULL,
+    user_id int,
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (id) REFERENCES films (id),
     UNIQUE (id, user_id)
 );
 
-DELETE
-FROM films;
-DELETE
-FROM films_genres;
-DELETE
-FROM users_friends;
-DELETE
-FROM films;
-DELETE
-FROM users;
-ALTER TABLE films
-    ALTER COLUMN id RESTART WITH 1;
-ALTER TABLE users
-    ALTER COLUMN id RESTART WITH 1;
+-- DELETE
+-- FROM films;
+-- DELETE
+-- FROM films_genres;
+-- DELETE
+-- FROM users_friends;
+-- DELETE
+-- FROM films;
+-- DELETE
+-- FROM users;
+-- ALTER TABLE films
+--     ALTER COLUMN id RESTART WITH 1;
+-- ALTER TABLE users
+--     ALTER COLUMN id RESTART WITH 1;

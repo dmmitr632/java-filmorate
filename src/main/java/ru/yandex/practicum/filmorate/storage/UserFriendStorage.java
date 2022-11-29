@@ -5,7 +5,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.List;
 
 public interface UserFriendStorage {
-
     List<User> getUserFriends(int id);
 
     List<User> getCommonFriends(int id, int friendId);
