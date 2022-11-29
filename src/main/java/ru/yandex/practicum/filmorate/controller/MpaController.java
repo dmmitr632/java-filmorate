@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.service.MpaService;
 
@@ -38,5 +39,10 @@ public class MpaController {
     @GetMapping
     public List<Mpa> viewAllMpas() {
         return mpaService.viewAllMpas();
+    }
+
+    @GetMapping("/{id}")
+    public Mpa getMpaById(@Valid int id) {
+        return mpaService.getMpaById(id);
     }
 }

@@ -28,4 +28,9 @@ public class MpaService {
     public List<Mpa> viewAllMpas() {
         return mpaStorage.getMpaRatings();
     }
+
+    public Mpa getMpaById(int id) {
+        return mpaStorage.getMpaById(id);
+    }
+
 }

@@ -39,4 +39,10 @@ public class GenreController {
     public List<Genre> viewAllGenres() {
         return genreService.viewAllGenres();
     }
+
+    @GetMapping("/{id}")
+    public Genre getGenreById(@Valid int id) {
+        return genreService.getGenreById(id);
+    }
+
 }
