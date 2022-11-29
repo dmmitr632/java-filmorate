@@ -51,18 +51,6 @@ public class FilmController {
         return filmService.getFilmById(id);
     }
 
-    //    @PutMapping("/{id}/like/{userId}")
-    //    public void userAddsLikeToFilm(@PathVariable Integer id, @PathVariable Integer userId) {
-    //        filmService.getFilmById(id).addUsersWhoLikedFilm(userId);
-    //        userService.getUserById(userId).addLikedFilmId(id);
-    //    }
-    //
-    //    @DeleteMapping("/{id}/like/{userId}")
-    //    public void userRemovesLikeToFilm(@PathVariable Integer id, @PathVariable Integer userId) {
-    //        userService.getUserById(userId).removeLikedFilmId(id);
-    //        filmService.getFilmById(id).removeUsersWhoLikedFilm(userId);
-    //    }
-
     @PutMapping("/{id}/like/{userId}")
     public void userAddsLikeToFilm(@PathVariable Integer id, @PathVariable Integer userId) {
         filmService.addUserLikeOnFilm(id, userId);

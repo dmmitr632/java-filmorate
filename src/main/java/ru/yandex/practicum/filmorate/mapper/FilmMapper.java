@@ -17,10 +17,6 @@ public class FilmMapper implements RowMapper<Film> {
         //LocalDate releaseDate = LocalDate.parse((rs.getString("release_date")));
         int duration = rs.getInt("duration");
         int rate = rs.getInt("rate");
-
-        //        return Film.builder().id(id).name(name).description(description).releaseDate(releaseDate).duration
-        //        (duration)
-        //                .rate(rate).build();
         return Film.builder().id(id).name(name).description(description).releaseDate(releaseDate).duration(duration)
                 .rate(rate).build();
     }

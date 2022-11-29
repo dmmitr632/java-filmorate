@@ -15,12 +15,15 @@ public class LikesOnFilmsDbStorage implements LikesOnFilmsStorage {
     }
 
     @Override
-    public void addLike(int filmId, int userId) {
-
+    public void addLike(int id, int userId) {
+        String query = "INSERT INTO films_users_liked VALUES(?, ?)";
+        jdbcTemplate.update(query, id, userId);
     }
 
     @Override
-    public void deleteLike(int filmId, int userId) {
+    public void deleteLike(int id, int userId) {
 
+        String query = "DELETE FROM films_users_liked WHERE id = ? AND user_id = ?";
+        jdbcTemplate.update(query, id, userId);
     }
 }
