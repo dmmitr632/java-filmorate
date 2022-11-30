@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static ru.yandex.practicum.filmorate.Constants.CINEMA_BIRTHDAY;
 import static ru.yandex.practicum.filmorate.Constants.MAX_DESCRIPTION_LENGTH;
@@ -163,11 +164,12 @@ public class FilmDbStorage implements FilmStorage {
                 .orElseThrow(() -> new NotFoundException(("Film not found")));
     }
 
-    private void addFilmGenre(Film film) {
+    private void addFilmGenre(@Valid @RequestBody Film film) {
         String queryAddGenreFilm = "INSERT INTO films_genres(id, genre_id) VALUES (?, ?)";
         if (film.getGenres() != null) {
             List<Genre> genres = new ArrayList<>(film.getGenres());
-            for (Genre genre : genres) {
+            List<Genre> genresWithoutDuplicates = genres.stream().distinct().collect(Collectors.toList());
+            for (Genre genre : genresWithoutDuplicates) {
                 jdbcTemplate.update(queryAddGenreFilm, film.getId(), genre.getId());
             }
         } else {
@@ -175,7 +177,7 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private void editFilmGenre(Film film) {
+    private void editFilmGenre(@Valid @RequestBody Film film) {
 
         String queryGetGenresForFilm =
                 "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM films_genres WHERE id = ?)";
@@ -189,7 +191,9 @@ public class FilmDbStorage implements FilmStorage {
         String queryAddGenreFilm = "INSERT INTO films_genres(id, genre_id) VALUES (?, ?)";
         if (film.getGenres() != null) {
             List<Genre> updatedGenres = new ArrayList<>(film.getGenres());
-            for (Genre genre : updatedGenres) {
+            List<Genre> updatedGenresWithoutDuplicates = updatedGenres.stream().distinct().collect(Collectors.toList());
+            for (Genre genre : updatedGenresWithoutDuplicates) {
+                System.out.println(genre);
                 jdbcTemplate.update(queryAddGenreFilm, film.getId(), genre.getId());
             }
         } else {
