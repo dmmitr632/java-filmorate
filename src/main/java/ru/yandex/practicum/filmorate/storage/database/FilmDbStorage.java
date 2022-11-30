@@ -75,7 +75,7 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(query, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), film.getRate(), film.getMpaId());
 
-        this.addFilmGenre(film);
+        this.editFilmGenre(film);
         return film;
     }
 
@@ -168,6 +168,28 @@ public class FilmDbStorage implements FilmStorage {
         if (film.getGenres() != null) {
             List<Genre> genres = new ArrayList<>(film.getGenres());
             for (Genre genre : genres) {
+                jdbcTemplate.update(queryAddGenreFilm, film.getId(), genre.getId());
+            }
+        } else {
+            jdbcTemplate.update(queryAddGenreFilm, film.getId(), null);
+        }
+    }
+
+    private void editFilmGenre(Film film) {
+
+        String queryGetGenresForFilm =
+                "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM films_genres WHERE id = ?)";
+        List<Genre> genres = jdbcTemplate.query(queryGetGenresForFilm, new GenreMapper(), film.getId());
+
+        for (Genre genre : genres) {
+            String queryDeleteGenres = "DELETE FROM films_genres WHERE id = ? AND genre_id = ?";
+            jdbcTemplate.update(queryDeleteGenres, film.getId(), genre.getId());
+        }
+
+        String queryAddGenreFilm = "INSERT INTO films_genres(id, genre_id) VALUES (?, ?)";
+        if (film.getGenres() != null) {
+            List<Genre> updatedGenres = new ArrayList<>(film.getGenres());
+            for (Genre genre : updatedGenres) {
                 jdbcTemplate.update(queryAddGenreFilm, film.getId(), genre.getId());
             }
         } else {
