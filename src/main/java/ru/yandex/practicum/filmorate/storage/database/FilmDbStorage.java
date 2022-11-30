@@ -39,19 +39,7 @@ public class FilmDbStorage implements FilmStorage {
 
     public Film addFilm(@Valid @RequestBody Film film) throws ValidationException {
 
-        if (film.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
-            throw new ValidationException("Date before " + CINEMA_BIRTHDAY);
-        }
-        //Если не вызывать эту валидацию до validateFilm(), то почему-то фильм с неверной датой все равно добавляется,
-        // хотя выводится сообщение об ошибке
-        // TODO: понять в чем дело
-
-        if (film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
-            log.info("Too long film description, {} chars", film.getDescription().length());
-            throw new ValidationException("too long film description");
-        } //Если не вызывать эту валидацию до validateFilm(), то почему-то сбивается счетчик id, и тесты не проходятся
-        // (id 3 вместо 2).
-        // TODO: понять в чем дело
+        validateFilm(film);
 
         String query =
                 "INSERT INTO films (name, description, release_date, duration, mpa_id)" + " VALUES(?, ?, ?, ?, ?)";
@@ -70,9 +58,6 @@ public class FilmDbStorage implements FilmStorage {
         film.setId(keyHolder.getKey().intValue());
         Mpa rating = this.getRating(film.getId());
         film.setMpa(rating);
-        validateFilm(film);
-
-        // System.out.println("film.getGenres() " + film.getGenres());
 
         this.addFilmGenre(film);
 
@@ -85,12 +70,11 @@ public class FilmDbStorage implements FilmStorage {
 
         String query = "MERGE INTO films(id, name, description, release_date, duration, rate, mpa_id)" +
                 " VALUES(?, ?, ?, ?, ?, ?, ?)";
-        validateFilmIdInDb(film.getId());
+        findFilmByIdInDb(film.getId());
 
         jdbcTemplate.update(query, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), film.getRate(), film.getMpaId());
 
-        validateFilm(film);
         this.addFilmGenre(film);
         return film;
     }
@@ -110,13 +94,13 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private ArrayList<Genre> getGenreForFilmByFilmId(int filmId) {
-        validateFilmIdInDb(filmId);
+        findFilmByIdInDb(filmId);
         String query = "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM films_genres WHERE id = ?)";
         return (ArrayList<Genre>) jdbcTemplate.query(query, new GenreMapper(), filmId);
     }
 
     private Mpa getRating(int id) {
-        validateFilmIdInDb(id);
+        findFilmByIdInDb(id);
         String query = "SELECT * FROM mpa WHERE mpa.id IN(SELECT mpa_id FROM films WHERE id = ?)";
         return jdbcTemplate.query(query, new MpaMapper(), id).stream().findAny()
                 .orElseThrow(() -> new ValidationException("Неверный рейтинг для id" + id));
@@ -134,12 +118,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(int filmId) {
-        validateFilmIdInDb(filmId);
-        String query = "SELECT * FROM films WHERE id = ?";
-
-        Film film = jdbcTemplate.query(query, new FilmMapper(), filmId).stream().findAny()
-                .orElseThrow(() -> new NotFoundException("Film with id " + filmId + "doesn't exist"));
-
+        Film film = findFilmByIdInDb(filmId);
         Mpa rating = this.getRating(film.getId());
         film.setMpa(rating);
         ArrayList<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
@@ -149,8 +128,10 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void validateFilm(Film film) {
-        if (film.getId() < 0) {
-            throw new ValidationException("id < 0");
+        if (film.getId() != null) {
+            if (film.getId() < 0) {
+                throw new ValidationException("id < 0");
+            }
         }
 
         if (film.getName().equals("")) {
@@ -176,9 +157,9 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private void validateFilmIdInDb(int id) throws NotFoundException {
+    private Film findFilmByIdInDb(int id) throws NotFoundException {
         String query = "SELECT * FROM films WHERE id = ?";
-        jdbcTemplate.query(query, new FilmMapper(), id).stream().findAny()
+        return jdbcTemplate.query(query, new FilmMapper(), id).stream().findAny()
                 .orElseThrow(() -> new NotFoundException(("Film not found")));
     }
 
