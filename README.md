@@ -1,5 +1,3 @@
-# java-filmorate
-
 Описание таблиц БД
 ---
 Тут 7 таблиц:
@@ -10,7 +8,7 @@ films_users_liked - лайкнутые пользователями фильмы
 
 films_genres - жанры фильмов. также таблица для м-н-м. У каждого фильма может быть множества тегов, и наоборот.
 
-mpa_rating - MPA-рейтинги. соединение 1 ко многим. У каждого фильма может быть только 1 рейтинг, у каждого рейтинга
+mpa - MPA-рейтинги. соединение 1 ко многим. У каждого фильма может быть только 1 рейтинг, у каждого рейтинга
 множество фильмов.
 
 users_friends - таблица для отслеживания статуса дружбы/подписки. Чтобы быть "другом", нужно чтобы в таблице были 2
@@ -20,9 +18,9 @@ users_friends - таблица для отслеживания статуса д
 Код для создания базы данных schema.sql:
 
 ```sql
-CREATE TABLE IF NOT EXISTS mpa_rating
+CREATE TABLE IF NOT EXISTS mpa
 (
-    mpa_rating_id varchar(80) PRIMARY KEY,
+    mpa_id varchar(80) PRIMARY KEY,
     rating_name   varchar(80)
 );
 
@@ -35,8 +33,8 @@ CREATE TABLE IF NOT EXISTS films
     release_date  date,
     duration      int,
     rate          double,
-    mpa_rating_id int,
-    FOREIGN KEY (mpa_rating_id) REFERENCES mpa_rating (mpa_rating_id)
+    mpa_id int,
+    FOREIGN KEY (mpa_id) REFERENCES mpa (mpa_id)
 );
 
 
@@ -91,23 +89,23 @@ CREATE TABLE IF NOT EXISTS films_users_liked
 -- Добавляем рейтинги
 
 MERGE
-INTO mpa_rating
+INTO mpa
     VALUES (1, 'G');
 
 MERGE
-INTO mpa_rating
+INTO mpa
     VALUES (2, 'PG');
 
 MERGE
-INTO mpa_rating
+INTO mpa
     VALUES (3, 'PG_13');
 
 MERGE
-INTO mpa_rating
+INTO mpa
     VALUES (4, 'R');
 
 MERGE
-INTO mpa_rating
+INTO mpa
     VALUES (5, 'NC_17');
 
 -- Добавляем жанры фильмов
@@ -168,91 +166,91 @@ INTO films
 -- Обновляем фильм
 UPDATE films
 SET films.name='Фильм 1 новое имя'
-WHERE films.film_id = 1;
+WHERE films.id = 1;
 
 -- Удаляем фильм
 DELETE
 FROM films
-WHERE films.film_id = 3;
+WHERE films.id = 3;
 
 
 -- Обновляем пользователя
 UPDATE users
 SET users.name='Anna 2'
-WHERE users.user_id = 1;
+WHERE users.id = 1;
 
 -- Удаляем пользователя
 DELETE
 FROM users
-WHERE users.user_id = 3;
+WHERE users.id = 3;
 
 -- Односторонняя дружба
 MERGE
-INTO users_friends KEY (user_id, friend_id)
+INTO users_friends KEY (id, friend_id)
     VALUES (1, 2);
 
 -- Без дружбы
 DELETE
 FROM users_friends
-WHERE users_friends.user_id = 1
+WHERE users_friends.id = 1
   AND users_friends.friend_id = 2;
 
 
 -- Двусторонняя дружба
 
 MERGE
-INTO users_friends KEY (user_id, friend_id)
+INTO users_friends KEY (id, friend_id)
     VALUES (1, 2);
 
 MERGE
-INTO users_friends KEY (user_id, friend_id)
+INTO users_friends KEY (id, friend_id)
     VALUES (2, 1);
 
 
 -- добавление лайка фильму
 MERGE
-INTO films_users_liked KEY (user_id, film_id)
+INTO films_users_liked KEY (user_id, id)
     VALUES (1, 1);
 
 -- удаление лайка у фильма
 DELETE
 FROM films_users_liked
-WHERE films_users_liked.film_id = 1
+WHERE films_users_liked.id = 1
   AND films_users_liked.user_id = 1;
 
 -- Добавляем жанры для фильмов
 MERGE
-INTO films_genres key (film_id, genre_id)
+INTO films_genres key (id, genre_id)
     VALUES (1, 3);
 
 MERGE
-INTO films_genres key (film_id, genre_id)
+INTO films_genres key (id, genre_id)
     VALUES (1, 2);
 
 MERGE
-INTO films_genres key (film_id, genre_id)
+INTO films_genres key (id, genre_id)
     VALUES (1, 6);
 
 MERGE
-INTO films_genres key (film_id, genre_id)
+INTO films_genres key (id, genre_id)
     VALUES (2, 1);
 
 MERGE
-INTO films_genres key (film_id, genre_id)
+INTO films_genres key (id, genre_id)
     VALUES (2, 4);
 
 -- Добавляем лайки для фильмов
 
 MERGE
-INTO films_users_liked KEY (film_id, user_id)
+INTO films_users_liked KEY (id, user_id)
     VALUES (1, 2);
 
 MERGE
-INTO films_users_liked KEY (film_id, user_id)
+INTO films_users_liked KEY (id, user_id)
     VALUES (1, 1);
 
 MERGE
-INTO films_users_liked KEY (film_id, user_id)
+INTO films_users_liked KEY (id, user_id)
     VALUES (2, 2);
 
 ```
