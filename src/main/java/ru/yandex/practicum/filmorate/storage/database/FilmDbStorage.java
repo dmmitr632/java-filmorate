@@ -169,6 +169,7 @@ public class FilmDbStorage implements FilmStorage {
         if (film.getGenres() != null) {
             List<Genre> genres = new ArrayList<>(film.getGenres());
             List<Genre> genresWithoutDuplicates = genres.stream().distinct().collect(Collectors.toList());
+            film.setGenres(genresWithoutDuplicates);
             for (Genre genre : genresWithoutDuplicates) {
                 jdbcTemplate.update(queryAddGenreFilm, film.getId(), genre.getId());
             }
@@ -178,7 +179,6 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void editFilmGenre(@Valid @RequestBody Film film) {
-
         String queryGetGenresForFilm =
                 "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM films_genres WHERE id = ?)";
         List<Genre> genres = jdbcTemplate.query(queryGetGenresForFilm, new GenreMapper(), film.getId());
@@ -187,13 +187,12 @@ public class FilmDbStorage implements FilmStorage {
             String queryDeleteGenres = "DELETE FROM films_genres WHERE id = ? AND genre_id = ?";
             jdbcTemplate.update(queryDeleteGenres, film.getId(), genre.getId());
         }
-
         String queryAddGenreFilm = "INSERT INTO films_genres(id, genre_id) VALUES (?, ?)";
         if (film.getGenres() != null) {
             List<Genre> updatedGenres = new ArrayList<>(film.getGenres());
             List<Genre> updatedGenresWithoutDuplicates = updatedGenres.stream().distinct().collect(Collectors.toList());
+            film.setGenres(updatedGenresWithoutDuplicates);
             for (Genre genre : updatedGenresWithoutDuplicates) {
-                System.out.println(genre);
                 jdbcTemplate.update(queryAddGenreFilm, film.getId(), genre.getId());
             }
         } else {
