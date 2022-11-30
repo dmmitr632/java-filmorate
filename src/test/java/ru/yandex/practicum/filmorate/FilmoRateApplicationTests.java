@@ -103,4 +103,17 @@ class FilmoRateApplicationTests {
         assertThrows(ru.yandex.practicum.filmorate.exceptions.ValidationException.class,
                 () -> userDbStorage.addUser(user));
     }
+
+    @Test
+    public void userUpdate() {
+        User user = User.builder().id(1).email("aaa@gmail2.com").login("Aaabbb2").name("aaa")
+                .birthday(LocalDate.of(2001, 1, 1)).build();
+
+        userDbStorage.editUser(user);
+        User userFromDb = userDbStorage.getUserById(1);
+        assertEquals(userFromDb.getEmail(), user.getEmail());
+        assertEquals(userFromDb.getLogin(), user.getLogin());
+        assertEquals(userFromDb.getName(), user.getName());
+        assertEquals(userFromDb.getBirthday(), user.getBirthday());
+    }
 }
