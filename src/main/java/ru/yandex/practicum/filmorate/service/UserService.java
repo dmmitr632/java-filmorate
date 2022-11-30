@@ -19,14 +19,6 @@ public class UserService {
     private final UserStorage userStorage;
     private final UserFriendStorage userFriendStorage;
 
-    public UserStorage getUserStorage() {
-        return userStorage;
-    }
-
-    public UserFriendStorage getUserFriendStorage() {
-        return userFriendStorage;
-    }
-
     @Autowired
     public UserService(@Qualifier("userDb") UserStorage userStorage,
                        @Qualifier("friendsDb") UserFriendStorage userFriendStorage) {
@@ -34,13 +26,14 @@ public class UserService {
         this.userFriendStorage = userFriendStorage;
     }
 
+
+
     public User getUserById(int userId) {
         return userStorage.getUserById(userId);
     }
 
     public User addUser(@Valid @RequestBody User user) {
         user = userStorage.addUser(user);
-        // System.out.println("User name " + user.getName());
         return user;
     }
 

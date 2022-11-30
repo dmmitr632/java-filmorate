@@ -37,7 +37,6 @@ public class LikesOnFilmsDbStorage implements LikesOnFilmsStorage {
         jdbcTemplate.update(queryMinusLike, id);
     }
 
-
     private void findFilmByIdInDb(int id) throws NotFoundException {
         String query = "SELECT * FROM films WHERE id = ?";
         jdbcTemplate.query(query, new FilmMapper(), id).stream().findAny()
@@ -49,5 +48,4 @@ public class LikesOnFilmsDbStorage implements LikesOnFilmsStorage {
         jdbcTemplate.query(query, new UserMapper(), id).stream().findAny()
                 .orElseThrow(() -> new NotFoundException(("User not found")));
     }
-
 }

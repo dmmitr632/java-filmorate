@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.FilmLikesComparator;
-import ru.yandex.practicum.filmorate.model.FilmLikesReversedComparator;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.LikesOnFilmsStorage;
 
@@ -51,9 +50,6 @@ public class FilmService {
         return filmStorage.viewAllFilms();
     }
 
-    public FilmStorage getFilmStorage() {
-        return filmStorage;
-    }
 
     public void addUserLikeOnFilm(Integer filmId, Integer userId) {
         likesOnFilmsStorage.addLike(filmId, userId);
