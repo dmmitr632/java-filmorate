@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class User {
-    private int id;
+    private Integer id;
     @NotBlank(message = "blank email")
     @NotEmpty(message = "empty email")
     @Email(message = "wrong email")

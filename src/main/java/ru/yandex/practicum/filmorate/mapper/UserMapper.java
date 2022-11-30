@@ -10,7 +10,7 @@ import java.time.LocalDate;
 public class UserMapper implements RowMapper<User> {
     @Override
     public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-        int id = rs.getInt("id");
+        Integer id = rs.getInt("id");
         String email = rs.getString("email");
         String login = rs.getString("login");
         String name = rs.getString("name");
