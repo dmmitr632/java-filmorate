@@ -80,15 +80,28 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public List<Film> viewAllFilms() {
+
         String query = ("SELECT * FROM films");
         log.info("Отображаем все фильмы");
         List<Film> films = jdbcTemplate.query(query, new FilmMapper());
-        for (Film film : films) {
-            Mpa rating = this.getRating(film.getId());
-            film.setMpa(rating);
-            ArrayList<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
-            film.setGenres(genres);
+
+        String queryMpa = "SELECT * FROM mpa, films WHERE films.mpa_id = mpa.id";
+
+        //String queryMpa = "SELECT * FROM films AS f JOIN mpa AS m ON f.MPA_ID = m.id";
+
+        //List<Film> films = jdbcTemplate.query(queryMpa, new FilmMapper());
+        List<Mpa> mpas = jdbcTemplate.query(queryMpa, new MpaMapper());
+
+        //String queryGenre = "SELECT * FROM genres g, films_genres fg WHERE fg.genre_id = g.id";
+
+        for (int i = 0; i < films.size(); i++) {
+
+            films.get(i).setMpa(mpas.get(i));
+
+            ArrayList<Genre> genres = this.getGenreForFilmByFilmId(films.get(i).getId());
+            films.get(i).setGenres(genres);
         }
+
         return films;
     }
 
