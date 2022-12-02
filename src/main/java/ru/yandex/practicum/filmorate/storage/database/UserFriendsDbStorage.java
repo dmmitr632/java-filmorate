@@ -22,7 +22,9 @@ public class UserFriendsDbStorage implements UserFriendStorage {
     @Override
     public List<User> getUserFriends(int id) {
         validateUserInDb(id);
-        String query = "SELECT * FROM users WHERE id IN (SELECT friend_id FROM users_friends WHERE id = ?)";
+        //String query = "SELECT * FROM users WHERE id IN (SELECT friend_id FROM users_friends WHERE id = ?)";
+        String query = "SELECT * FROM users, users_friends WHERE users.id = users_friends.friend_id AND users_friends" +
+                ".id = ?";
         return jdbcTemplate.query(query, new UserMapper(), id);
     }
 
@@ -30,9 +32,14 @@ public class UserFriendsDbStorage implements UserFriendStorage {
     public List<User> getCommonFriends(int id, int friendId) {
         validateUserInDb(id);
         validateUserInDb(friendId);
-        String query = "SELECT *FROM users WHERE id IN(SELECT * FROM (SELECT friend_id FROM (" +
-                "SELECT friend_id FROM users_friends WHERE id = ?) WHERE friend_id IN (" +
-                "SELECT friend_id FROM users_friends WHERE id = ?)))";
+        //String query = "SELECT * FROM users WHERE id IN(SELECT * FROM (SELECT friend_id FROM (" +
+        //        "SELECT friend_id FROM users_friends WHERE id = ?) WHERE friend_id IN (" +
+        //        "SELECT friend_id FROM users_friends WHERE id = ?)))";
+
+        String query =
+                "SELECT * FROM users u, users_friends uf1, users_friends uf2 WHERE u.id = uf1.friend_id AND u" +
+                        ".id = uf2.friend_id AND uf1.id = ? AND uf2.id = ?";
+
         return jdbcTemplate.query(query, new UserMapper(), id, friendId);
     }
 
