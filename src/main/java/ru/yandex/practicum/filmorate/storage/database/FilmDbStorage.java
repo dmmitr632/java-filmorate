@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.database;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,9 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,24 +82,63 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-    @Override
+//    public List<Film> viewAllFilmsOld() {
+//
+//        String query = ("SELECT * FROM films");
+//        log.info("Отображаем все фильмы");
+//        List<Film> films = jdbcTemplate.query(query, new FilmMapper());
+//
+//        String queryMpa = "SELECT * FROM mpa, films WHERE films.mpa_id = mpa.id";
+//
+//        //String queryMpa = "SELECT * FROM films AS f JOIN mpa AS m ON f.MPA_ID = m.id";
+//
+//        //List<Film> films = jdbcTemplate.query(queryMpa, new FilmMapper());
+//        List<Mpa> mpas = jdbcTemplate.query(queryMpa, new MpaMapper());
+//
+//        //String queryGenre = "SELECT * FROM genres g, films_genres fg WHERE fg.genre_id = g.id";
+//
+//        for (int i = 0; i < films.size(); i++) {
+//
+//            films.get(i).setMpa(mpas.get(i));
+//
+//            ArrayList<Genre> genres = this.getGenreForFilmByFilmId(films.get(i).getId());
+//            films.get(i).setGenres(genres);
+//        }
+//
+//        return films;
+//    }
+
     public List<Film> viewAllFilms() {
 
-        String query = ("SELECT * FROM films");
-        log.info("Отображаем все фильмы");
-        List<Film> films = jdbcTemplate.query(query, new FilmMapper());
 
         String queryMpa = "SELECT * FROM mpa, films WHERE films.mpa_id = mpa.id";
 
-        //String queryMpa = "SELECT * FROM films AS f JOIN mpa AS m ON f.MPA_ID = m.id";
 
-        //List<Film> films = jdbcTemplate.query(queryMpa, new FilmMapper());
-        List<Mpa> mpas = jdbcTemplate.query(queryMpa, new MpaMapper());
 
-        //String queryGenre = "SELECT * FROM genres g, films_genres fg WHERE fg.genre_id = g.id";
+        List<Film> films = jdbcTemplate.query(queryMpa, new RowMapper() {
+            @Override
+            public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Integer id = (rs.getInt("films.id"));
+                String name = rs.getString("films.name");
+                String description = rs.getString("description");
+                LocalDate releaseDate = rs.getDate("release_date").toLocalDate();
+                Integer duration = rs.getInt("duration");
+                Integer rate = rs.getInt("rate");
+                return Film.builder().id(id).name(name).description(description).releaseDate(releaseDate)
+                        .duration(duration).rate(rate).build();
+            }
+        });
 
-        for (int i = 0; i < films.size(); i++) {
+        List<Mpa> mpas = jdbcTemplate.query(queryMpa, new RowMapper() {
+            @Override
+            public Mpa mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Integer id = rs.getInt("mpa.id");
+                String name = rs.getString("mpa.name");
+                return Mpa.builder().id(id).name(name).build();
+            }
+        });
 
+        for (int i = 0; i < mpas.size(); i++) {
             films.get(i).setMpa(mpas.get(i));
 
             ArrayList<Genre> genres = this.getGenreForFilmByFilmId(films.get(i).getId());
@@ -103,6 +146,7 @@ public class FilmDbStorage implements FilmStorage {
         }
 
         return films;
+
     }
 
     private ArrayList<Genre> getGenreForFilmByFilmId(int filmId) {
