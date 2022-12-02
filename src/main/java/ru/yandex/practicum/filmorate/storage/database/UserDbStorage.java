@@ -6,14 +6,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import javax.validation.Valid;
 import java.sql.PreparedStatement;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -33,7 +31,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User addUser(@Valid @RequestBody User user) {
+    public User addUser(User user) {
         validateUser(user);
 
         String query = "INSERT INTO users(email, login, name, birthday) VALUES (?, ?, ?, ?)";
@@ -56,14 +54,13 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User editUser(@Valid @RequestBody User user) {
+    public User editUser(User user) {
 
         validateUser(user);
         String query = "MERGE INTO users(id, email, login, name, birthday)" + " VALUES(?, ?, ?, ?, ?)";
         findUserByIdInDb(user.getId());
 
         jdbcTemplate.update(query, user.getId(), user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
-        findUserByIdInDb(user.getId());
         String querySetName = "UPDATE users SET name = ? WHERE id = ?";
         jdbcTemplate.update(querySetName, user.getName(), user.getId());
 

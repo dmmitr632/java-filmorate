@@ -50,7 +50,6 @@ public class FilmService {
         return filmStorage.viewAllFilms();
     }
 
-
     public void addUserLikeOnFilm(Integer filmId, Integer userId) {
         likesOnFilmsStorage.addLike(filmId, userId);
     }

@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
@@ -17,7 +16,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import javax.validation.Valid;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +37,7 @@ public class FilmDbStorage implements FilmStorage {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Film addFilm(@Valid @RequestBody Film film) throws ValidationException {
+    public Film addFilm(Film film) throws ValidationException {
 
         validateFilm(film);
 
@@ -50,15 +49,14 @@ public class FilmDbStorage implements FilmStorage {
             PreparedStatement stmt = connection.prepareStatement(query, new String[]{"id"});
             stmt.setString(1, film.getName());
             stmt.setString(2, film.getDescription());
-            stmt.setObject(3, film.getReleaseDate());
+            stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
             stmt.setInt(4, film.getDuration());
             stmt.setInt(5, film.getMpaId());
             return stmt;
         }, keyHolder);
 
         film.setId(keyHolder.getKey().intValue());
-        Mpa rating = this.getRating(film.getId());
-        film.setMpa(rating);
+
 
         this.addFilmGenre(film);
 
@@ -66,11 +64,13 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film editFilm(@Valid @RequestBody Film film) throws ValidationException, NotFoundException {
+    public Film editFilm(Film film) throws ValidationException, NotFoundException {
         validateFilm(film);
 
         String query = "MERGE INTO films(id, name, description, release_date, duration, rate, mpa_id)" +
                 " VALUES(?, ?, ?, ?, ?, ?, ?)";
+
+
         findFilmByIdInDb(film.getId());
 
         jdbcTemplate.update(query, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
@@ -95,7 +95,6 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private ArrayList<Genre> getGenreForFilmByFilmId(int filmId) {
-        findFilmByIdInDb(filmId);
         String query = "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM films_genres WHERE id = ?)";
         return (ArrayList<Genre>) jdbcTemplate.query(query, new GenreMapper(), filmId);
     }
@@ -164,7 +163,7 @@ public class FilmDbStorage implements FilmStorage {
                 .orElseThrow(() -> new NotFoundException(("Film not found")));
     }
 
-    private void addFilmGenre(@Valid @RequestBody Film film) {
+    private void addFilmGenre(Film film) {
         String queryAddGenreFilm = "INSERT INTO films_genres(id, genre_id) VALUES (?, ?)";
         if (film.getGenres() != null) {
             List<Genre> genres = new ArrayList<>(film.getGenres());
@@ -178,7 +177,7 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private void editFilmGenre(@Valid @RequestBody Film film) {
+    private void editFilmGenre(Film film) {
         String queryGetGenresForFilm =
                 "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM films_genres WHERE id = ?)";
         List<Genre> genres = jdbcTemplate.query(queryGetGenresForFilm, new GenreMapper(), film.getId());
