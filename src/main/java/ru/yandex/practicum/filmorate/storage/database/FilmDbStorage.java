@@ -57,9 +57,6 @@ public class FilmDbStorage implements FilmStorage {
 
         film.setId(keyHolder.getKey().intValue());
 
-        Mpa rating = this.getRating(film.getId());// unnecessary. adds mpa name to server response
-        film.setMpa(rating);//
-
         this.addFilmGenre(film);
 
         return film;
@@ -176,23 +173,14 @@ public class FilmDbStorage implements FilmStorage {
             for (Genre genre : genresWithoutDuplicates) {
                 jdbcTemplate.update(queryAddGenreFilm, film.getId(), genre.getId());
             }
-        } else {
-            jdbcTemplate.update(queryAddGenreFilm, film.getId(), null);
         }
     }
 
     private void editFilmGenre(Film film) {
 
-        String queryGetGenresForFilm =
+        String queryDeleteGenres = "DELETE FROM films_genres WHERE id = ?";
+        jdbcTemplate.update(queryDeleteGenres, film.getId());
 
-                "SELECT genres.id, genres.name FROM genres, films_genres WHERE films_genres.genre_id = genres.id AND " +
-                        "films_genres.id = ?";
-        List<Genre> genres = jdbcTemplate.query(queryGetGenresForFilm, new GenreMapper(), film.getId());
-
-        for (Genre genre : genres) {
-            String queryDeleteGenres = "DELETE FROM films_genres WHERE id = ? AND genre_id = ?";
-            jdbcTemplate.update(queryDeleteGenres, film.getId(), genre.getId());
-        }
         String queryAddGenreFilm = "INSERT INTO films_genres(id, genre_id) VALUES (?, ?)";
         if (film.getGenres() != null) {
             List<Genre> updatedGenres = new ArrayList<>(film.getGenres());
