@@ -72,7 +72,7 @@ public class FilmDbStorage implements FilmStorage {
         String query = "MERGE INTO films(id, name, description, release_date, duration, rate, mpa_id)" +
                 " VALUES(?, ?, ?, ?, ?, ?, ?)";
 
-        findFilmByIdInDb(film.getId());
+        validateIfFilmInDb(film.getId());
 
         jdbcTemplate.update(query, film.getId(), film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getDuration(), film.getRate(), film.getMpaId());
@@ -96,15 +96,14 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private ArrayList<Genre> getGenreForFilmByFilmId(int filmId) {
-        //String query = "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM films_genres WHERE id = ?)";
+
         String query = "SELECT * FROM genres g, films_genres fg WHERE fg.genre_id = g.id AND fg.id=?";
         return (ArrayList<Genre>) jdbcTemplate.query(query, new GenreMapper(), filmId);
     }
 
-    private Mpa getRating(int id) {
-        findFilmByIdInDb(id);
-        //String query = "SELECT * FROM mpa WHERE mpa.id IN(SELECT mpa_id FROM films WHERE id = ?)";
-        //String query = "SELECT mpa.id, mpa.name FROM mpa, films WHERE films.mpa_id = mpa.id AND films.id=?";
+    private Mpa getRating(int id) { // unnecessary. adds mpa name to server response
+        validateIfFilmInDb(id);
+
         String query = "SELECT * FROM mpa, films WHERE films.mpa_id = mpa.id AND films.id=?";
 
         return jdbcTemplate.query(query, new MpaMapper(), id).stream().findAny()
@@ -123,7 +122,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film getFilmById(int filmId) {
-        Film film = findFilmByIdInDb(filmId);
+        Film film = validateIfFilmInDb(filmId);
         Mpa rating = this.getRating(film.getId());
         film.setMpa(rating);
         ArrayList<Genre> genres = this.getGenreForFilmByFilmId(film.getId());
@@ -162,7 +161,7 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
-    private Film findFilmByIdInDb(int id) throws NotFoundException {
+    private Film validateIfFilmInDb(int id) throws NotFoundException {
         String query = "SELECT * FROM films WHERE id = ?";
         return jdbcTemplate.query(query, new FilmMapper(), id).stream().findAny()
                 .orElseThrow(() -> new NotFoundException(("Film not found")));
@@ -185,7 +184,7 @@ public class FilmDbStorage implements FilmStorage {
     private void editFilmGenre(Film film) {
 
         String queryGetGenresForFilm =
-                // "SELECT * FROM genres WHERE id IN (SELECT genre_id FROM films_genres WHERE id = ?)";
+
                 "SELECT genres.id, genres.name FROM genres, films_genres WHERE films_genres.genre_id = genres.id AND " +
                         "films_genres.id = ?";
         List<Genre> genres = jdbcTemplate.query(queryGetGenresForFilm, new GenreMapper(), film.getId());

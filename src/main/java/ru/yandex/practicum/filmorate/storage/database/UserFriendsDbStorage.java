@@ -21,8 +21,8 @@ public class UserFriendsDbStorage implements UserFriendStorage {
 
     @Override
     public List<User> getUserFriends(int id) {
-        validateUserInDb(id);
-        //String query = "SELECT * FROM users WHERE id IN (SELECT friend_id FROM users_friends WHERE id = ?)";
+        validateIfUserInDb(id);
+
         String query = "SELECT * FROM users, users_friends WHERE users.id = users_friends.friend_id AND users_friends" +
                 ".id = ?";
         return jdbcTemplate.query(query, new UserMapper(), id);
@@ -30,11 +30,9 @@ public class UserFriendsDbStorage implements UserFriendStorage {
 
     @Override
     public List<User> getCommonFriends(int id, int friendId) {
-        validateUserInDb(id);
-        validateUserInDb(friendId);
-        //String query = "SELECT * FROM users WHERE id IN(SELECT * FROM (SELECT friend_id FROM (" +
-        //        "SELECT friend_id FROM users_friends WHERE id = ?) WHERE friend_id IN (" +
-        //        "SELECT friend_id FROM users_friends WHERE id = ?)))";
+        validateIfUserInDb(id);
+        validateIfUserInDb(friendId);
+
 
         String query =
                 "SELECT * FROM users u, users_friends uf1, users_friends uf2 WHERE u.id = uf1.friend_id AND u" +
@@ -45,21 +43,21 @@ public class UserFriendsDbStorage implements UserFriendStorage {
 
     @Override
     public void addFriend(int id, int friendId) {
-        validateUserInDb(id);
-        validateUserInDb(friendId);
+        validateIfUserInDb(id);
+        validateIfUserInDb(friendId);
         String query = "INSERT INTO users_friends VALUES(?, ?)";
         jdbcTemplate.update(query, id, friendId);
     }
 
     @Override
     public void deleteFriend(int id, int friendId) {
-        validateUserInDb(id);
-        validateUserInDb(friendId);
+        validateIfUserInDb(id);
+        validateIfUserInDb(friendId);
         String query = "DELETE FROM users_friends WHERE id = ? AND friend_id = ?";
         jdbcTemplate.update(query, id, friendId);
     }
 
-    private void validateUserInDb(int id) throws NotFoundException {
+    private void validateIfUserInDb(int id) throws NotFoundException {
         String query = "SELECT * FROM users WHERE id = ?";
         jdbcTemplate.query(query, new UserMapper(), id).stream().findAny()
                 .orElseThrow(() -> new NotFoundException(("User not found")));

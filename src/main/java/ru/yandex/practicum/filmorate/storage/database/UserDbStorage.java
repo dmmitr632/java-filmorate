@@ -58,7 +58,7 @@ public class UserDbStorage implements UserStorage {
 
         validateUser(user);
         String query = "MERGE INTO users(id, email, login, name, birthday)" + " VALUES(?, ?, ?, ?, ?)";
-        findUserByIdInDb(user.getId());
+        validateIfUserInDb(user.getId());
 
         jdbcTemplate.update(query, user.getId(), user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
         String querySetName = "UPDATE users SET name = ? WHERE id = ?";
@@ -86,7 +86,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User getUserById(int userId) {
-        return findUserByIdInDb(userId);
+        return validateIfUserInDb(userId);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class UserDbStorage implements UserStorage {
         }
     }
 
-    private User findUserByIdInDb(int id) throws NotFoundException {
+    private User validateIfUserInDb(int id) throws NotFoundException {
         String query = "SELECT * FROM users WHERE id = ?";
         return jdbcTemplate.query(query, new UserMapper(), id).stream().findAny()
                 .orElseThrow(() -> new NotFoundException(("User not found")));
