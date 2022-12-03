@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.database;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,9 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,85 +108,49 @@ public class FilmDbStorage implements FilmStorage {
     //        return films;
     //    }
 
-    //    public List<Film> viewAllFilmsNew1() {
-    //
-    //        String queryMpa = "SELECT * FROM mpa, films WHERE films.mpa_id = mpa.id";
-    //
-    //        List<Film> films = jdbcTemplate.query(queryMpa, (RowMapper) (rs, rowNum) -> {
-    //            Integer id = (rs.getInt("films.id"));
-    //            String name = rs.getString("films.name");
-    //            String description = rs.getString("description");
-    //            LocalDate releaseDate = rs.getDate("release_date").toLocalDate();
-    //            Integer duration = rs.getInt("duration");
-    //            Integer rate = rs.getInt("rate");
-    //            return Film.builder().id(id).name(name).description(description).releaseDate(releaseDate).duration
-    //            (duration)
-    //                    .rate(rate).build();
-    //        });
-    //
-    //        List<Mpa> mpas = jdbcTemplate.query(queryMpa, (RowMapper) (rs, rowNum) -> {
-    //            Integer id = rs.getInt("mpa.id");
-    //            String name = rs.getString("mpa.name");
-    //            return Mpa.builder().id(id).name(name).build();
-    //        });
-    //
-    //        String queryGenres = "SELECT * FROM genres g, films_genres fg WHERE fg.genre_id = g.id";
-    //        //jdbcTemplate.query(queryGenres, new GenreMapper());
-    //
-    //        for (int i = 0; i < films.size(); i++) {
-    //            films.get(i).setMpa(mpas.get(i));
-    //
-    //            ArrayList<Genre> genres = this.getGenreForFilmByFilmId(films.get(i).getId());
-    //            films.get(i).setGenres(genres);
-    //        }
-    //
-    //        //        HashMap<Integer, Set<Integer>> genresHashMap = jdbcTemplate.query(queryGenres, (ResultSet rs)
-    //        -> {
-    //        //            HashMap<Integer, Set<Integer>> genresMap = new HashMap<>();
-    //        //            while (rs.next()) {
-    //        //                Set<Integer> genresForOneFilm = new HashSet<>();
-    //        //                genresForOneFilm.add(rs.getInt("g.id"));
-    //        //                genresMap.put(rs.getInt("fg.id"), genresForOneFilm);
-    //        //            }
-    //        //            return genresMap;
-    //        //        });
-    //        //System.out.println(genresHashMap);
-    //
-    //        return films;
-    //    }
-
     @Override
     public List<Film> viewAllFilms() {
 
         String queryMpa = "SELECT * FROM mpa, films WHERE films.mpa_id = mpa.id";
 
-        List<Film> films = jdbcTemplate.query(queryMpa, new FilmMapper());
+        HashMap<Integer, Film> films = new HashMap<>();
 
-        List<Mpa> mpaRatings = jdbcTemplate.query(queryMpa, new MpaMapper());
+        jdbcTemplate.query(queryMpa, (RowMapper) (rs, rowNum) -> {
 
-        String queryGenres =
-                "SELECT DISTINCT fg.id, g.name FROM films_genres AS fg LEFT JOIN genres AS g ON g.id = fg.genre_id " +
-                        "WHERE fg.id = ?";
-
-        for (int i = 0; i < films.size(); i++) {
-            films.get(i).setMpa(mpaRatings.get(i));
-        }
-
-        HashMap<Integer, Film> filmsMap = jdbcTemplate.query(queryGenres, (ResultSet rs) -> {
-            HashMap<Integer, Film> fm = new HashMap<>();
             while (rs.next()) {
-                Film film = fm.get(rs.getInt("films.id"));
+                Integer id = (rs.getInt("films.id"));
+                String name = rs.getString("films.name");
+                String description = rs.getString("films.description");
+                LocalDate releaseDate = rs.getDate("films.release_date").toLocalDate();
+                Integer duration = rs.getInt("films.duration");
+                Integer rate = rs.getInt("films.rate");
+
+                Mpa mpaRating = Mpa.builder().id(rs.getInt("mpa.id")).name("mpa.name").build();
+
+                Film film = Film.builder().id(id).name(name).description(description).releaseDate(releaseDate)
+                        .duration(duration).rate(rate).mpa(mpaRating).build();
+
+                films.put(rs.getInt("films.id"), film);
+            }
+            return (ArrayList<Film>) films.values();
+        });
+
+        String queryGenres = "SELECT DISTINCT fg.id, g.name FROM films_genres AS fg" +
+                " LEFT JOIN genres AS g ON g.id = fg.genre_id WHERE fg.id = ?";
+        jdbcTemplate.query(queryGenres, (ResultSet rs) ->
+
+        {
+
+            while (rs.next()) {
+                Film film = films.get(rs.getInt("films.id"));
 
                 film.getGenres()
                         .add(Genre.builder().id(rs.getInt("genres.id")).name(rs.getString("genres.name")).build());
             }
-            return fm;
         });
+        Collection<Film> filmsCollection = films.values();
+        ArrayList<Film> filmsList = new ArrayList<>(filmsCollection);
 
-        ArrayList<Film> filmsList = (ArrayList<Film>) filmsMap.values();
-        for (int i = 0; i < filmsList.size(); i++) {
-            filmsList.get(i).setMpa(mpaRatings.get(i));
-        }
         return filmsList;
     }
 
