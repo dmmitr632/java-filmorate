@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -32,7 +33,7 @@ public class Film {
     private Integer duration;
     @PositiveOrZero
     private Integer rate;
-    private List<Genre> genres;
+    private List<Genre> genres = new ArrayList<>();
 
     public int getMpaId() {
         return mpa.getId();

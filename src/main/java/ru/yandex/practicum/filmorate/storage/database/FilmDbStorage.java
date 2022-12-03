@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,8 +83,8 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-    @Override
-    public List<Film> viewAllFilms() {
+    //@Override
+    public List<Film> viewAllFilmsOld() {
 
         String queryMpa = "SELECT * FROM mpa, films WHERE films.mpa_id = mpa.id";
 
@@ -117,31 +118,35 @@ public class FilmDbStorage implements FilmStorage {
         return films;
     }
 
-    public List<Film> viewAllFilmsNew() {
+    public List<Film> viewAllFilms() {
 
         String queryMpa = "SELECT * FROM mpa, films WHERE films.mpa_id = mpa.id";
 
         HashMap<Integer, Film> films = new HashMap<>();
 
         jdbcTemplate.query(queryMpa, (ResultSet rs) -> {
-
-            while (rs.next()) {
+            //rs.beforeFirst();
+            //while (rs.next()) {
+                System.out.println("RS_NEXT");
                 Integer id = (rs.getInt("films.id"));
                 String name = rs.getString("films.name");
-                String description = rs.getString("films.description");
-                LocalDate releaseDate = rs.getDate("films.release_date").toLocalDate();
-                Integer duration = rs.getInt("films.duration");
-                Integer rate = rs.getInt("films.rate");
+                String description = rs.getString("description");
+                LocalDate releaseDate = rs.getDate("release_date").toLocalDate();
+                Integer duration = rs.getInt("duration");
+                Integer rate = rs.getInt("rate");
 
                 Mpa mpaRating = Mpa.builder().id(rs.getInt("mpa.id")).name("mpa.name").build();
 
                 Film film = Film.builder().id(id).name(name).description(description).releaseDate(releaseDate)
-                        .duration(duration).rate(rate).mpa(mpaRating).build();
+                        .duration(duration).rate(rate).mpa(mpaRating).genres(new ArrayList<>(Collections.emptyList())).build();
 
-                films.put(rs.getInt("films.id"), film);
+                films.put(id, film);
                 //System.out.printf("films", films);
-            }
+            //}
         });
+
+        System.out.println("FILMS" + films);
+
 
         String queryGenres = "SELECT DISTINCT fg.id AS fg_id, g.id AS g_id ,g.name AS g_name FROM films_genres AS fg" +
                 " LEFT JOIN genres AS g ON g.id = fg.genre_id";
@@ -149,10 +154,14 @@ public class FilmDbStorage implements FilmStorage {
             while (rs.next()) {
                 Film film = films.get(rs.getInt("fg_id"));
 
-                Genre genre = Genre.builder().id(rs.getInt("g_id")).name(rs.getString("g_name")).build();
+                //if ((rs.getInt("g_id") != null) {
+                    Genre genre = Genre.builder().id(rs.getInt("g_id")).name(rs.getString("g_name")).build();
 
-                // System.out.println(film.getGenres()); //почему-то null, вместо списка Genre с элемнетом null
-                film.getGenres().add(genre);
+                    System.out.println("film.getGenres()" + film.getGenres());
+                    System.out.println("genre" + genre);//почему-то null, вместо списка Genre с
+                // элементом null
+                    film.getGenres().add(genre);
+                //}
             }
         });
         Collection<Film> filmsCollection = films.values();
