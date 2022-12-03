@@ -82,8 +82,6 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-
-
     @Override
     public List<Film> viewAllFilms() {
 
@@ -141,17 +139,20 @@ public class FilmDbStorage implements FilmStorage {
                         .duration(duration).rate(rate).mpa(mpaRating).build();
 
                 films.put(rs.getInt("films.id"), film);
+                //System.out.printf("films", films);
             }
         });
 
-        String queryGenres = "SELECT DISTINCT fg.id, g.name FROM films_genres AS fg" +
+        String queryGenres = "SELECT DISTINCT fg.id AS fg_id, g.id AS g_id ,g.name AS g_name FROM films_genres AS fg" +
                 " LEFT JOIN genres AS g ON g.id = fg.genre_id";
         jdbcTemplate.query(queryGenres, (ResultSet rs) -> {
             while (rs.next()) {
-                Film film = films.get(rs.getInt("films.id"));
+                Film film = films.get(rs.getInt("fg_id"));
 
-                film.getGenres()
-                        .add(Genre.builder().id(rs.getInt("genres.id")).name(rs.getString("genres.name")).build());
+                Genre genre = Genre.builder().id(rs.getInt("g_id")).name(rs.getString("g_name")).build();
+
+                // System.out.println(film.getGenres()); //почему-то null, вместо списка Genre с элемнетом null
+                film.getGenres().add(genre);
             }
         });
         Collection<Film> filmsCollection = films.values();
