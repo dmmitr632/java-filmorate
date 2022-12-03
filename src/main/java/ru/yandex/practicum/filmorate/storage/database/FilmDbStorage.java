@@ -82,40 +82,50 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-    //    public List<Film> viewAllFilmsOld() {
-    //
-    //        String query = ("SELECT * FROM films");
-    //        log.info("Отображаем все фильмы");
-    //        List<Film> films = jdbcTemplate.query(query, new FilmMapper());
-    //
-    //        String queryMpa = "SELECT * FROM mpa, films WHERE films.mpa_id = mpa.id";
-    //
-    //        //String queryMpa = "SELECT * FROM films AS f JOIN mpa AS m ON f.MPA_ID = m.id";
-    //
-    //        //List<Film> films = jdbcTemplate.query(queryMpa, new FilmMapper());
-    //        List<Mpa> mpas = jdbcTemplate.query(queryMpa, new MpaMapper());
-    //
-    //        //String queryGenre = "SELECT * FROM genres g, films_genres fg WHERE fg.genre_id = g.id";
-    //
-    //        for (int i = 0; i < films.size(); i++) {
-    //
-    //            films.get(i).setMpa(mpas.get(i));
-    //
-    //            ArrayList<Genre> genres = this.getGenreForFilmByFilmId(films.get(i).getId());
-    //            films.get(i).setGenres(genres);
-    //        }
-    //
-    //        return films;
-    //    }
+
 
     @Override
     public List<Film> viewAllFilms() {
 
         String queryMpa = "SELECT * FROM mpa, films WHERE films.mpa_id = mpa.id";
 
+        List<Film> films = jdbcTemplate.query(queryMpa, (RowMapper) (rs, rowNum) -> {
+            Integer id = (rs.getInt("films.id"));
+            String name = rs.getString("films.name");
+            String description = rs.getString("description");
+            LocalDate releaseDate = rs.getDate("release_date").toLocalDate();
+            Integer duration = rs.getInt("duration");
+            Integer rate = rs.getInt("rate");
+            return Film.builder().id(id).name(name).description(description).releaseDate(releaseDate).duration(duration)
+                    .rate(rate).build();
+        });
+
+        List<Mpa> mpas = jdbcTemplate.query(queryMpa, (RowMapper) (rs, rowNum) -> {
+            Integer id = rs.getInt("mpa.id");
+            String name = rs.getString("mpa.name");
+            return Mpa.builder().id(id).name(name).build();
+        });
+
+        //String queryGenres = "SELECT * FROM genres g, films_genres fg WHERE fg.genre_id = g.id";
+        //jdbcTemplate.query(queryGenres, new GenreMapper());
+
+        for (int i = 0; i < films.size(); i++) {
+            films.get(i).setMpa(mpas.get(i));
+
+            ArrayList<Genre> genres = this.getGenreForFilmByFilmId(films.get(i).getId());
+            films.get(i).setGenres(genres);
+        }
+
+        return films;
+    }
+
+    public List<Film> viewAllFilmsNew() {
+
+        String queryMpa = "SELECT * FROM mpa, films WHERE films.mpa_id = mpa.id";
+
         HashMap<Integer, Film> films = new HashMap<>();
 
-        jdbcTemplate.query(queryMpa, (RowMapper) (rs, rowNum) -> {
+        jdbcTemplate.query(queryMpa, (ResultSet rs) -> {
 
             while (rs.next()) {
                 Integer id = (rs.getInt("films.id"));
@@ -132,15 +142,11 @@ public class FilmDbStorage implements FilmStorage {
 
                 films.put(rs.getInt("films.id"), film);
             }
-            return (ArrayList<Film>) films.values();
         });
 
         String queryGenres = "SELECT DISTINCT fg.id, g.name FROM films_genres AS fg" +
-                " LEFT JOIN genres AS g ON g.id = fg.genre_id WHERE fg.id = ?";
-        jdbcTemplate.query(queryGenres, (ResultSet rs) ->
-
-        {
-
+                " LEFT JOIN genres AS g ON g.id = fg.genre_id";
+        jdbcTemplate.query(queryGenres, (ResultSet rs) -> {
             while (rs.next()) {
                 Film film = films.get(rs.getInt("films.id"));
 
@@ -149,9 +155,7 @@ public class FilmDbStorage implements FilmStorage {
             }
         });
         Collection<Film> filmsCollection = films.values();
-        ArrayList<Film> filmsList = new ArrayList<>(filmsCollection);
-
-        return filmsList;
+        return new ArrayList<>(filmsCollection);
     }
 
     private ArrayList<Genre> getGenreForFilmByFilmId(int filmId) {
