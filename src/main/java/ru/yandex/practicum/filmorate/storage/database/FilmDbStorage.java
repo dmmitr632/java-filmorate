@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -84,41 +83,6 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-    //@Override
-    public List<Film> viewAllFilmsOld() {
-
-        String queryMpa = "SELECT * FROM mpa, films WHERE films.mpa_id = mpa.id";
-
-        List<Film> films = jdbcTemplate.query(queryMpa, (RowMapper) (rs, rowNum) -> {
-            Integer id = (rs.getInt("films.id"));
-            String name = rs.getString("films.name");
-            String description = rs.getString("description");
-            LocalDate releaseDate = rs.getDate("release_date").toLocalDate();
-            Integer duration = rs.getInt("duration");
-            Integer rate = rs.getInt("rate");
-            return Film.builder().id(id).name(name).description(description).releaseDate(releaseDate).duration(duration)
-                    .rate(rate).build();
-        });
-
-        List<Mpa> mpas = jdbcTemplate.query(queryMpa, (RowMapper) (rs, rowNum) -> {
-            Integer id = rs.getInt("mpa.id");
-            String name = rs.getString("mpa.name");
-            return Mpa.builder().id(id).name(name).build();
-        });
-
-        //String queryGenres = "SELECT * FROM genres g, films_genres fg WHERE fg.genre_id = g.id";
-        //jdbcTemplate.query(queryGenres, new GenreMapper());
-
-        for (int i = 0; i < films.size(); i++) {
-            films.get(i).setMpa(mpas.get(i));
-
-            ArrayList<Genre> genres = this.getGenreForFilmByFilmId(films.get(i).getId());
-            films.get(i).setGenres(genres);
-        }
-
-        return films;
-    }
-
     public List<Film> viewAllFilms() {
 
         String queryMpa = "SELECT * FROM mpa, films WHERE films.mpa_id = mpa.id";
@@ -127,7 +91,7 @@ public class FilmDbStorage implements FilmStorage {
 
         jdbcTemplate.query(queryMpa, (ResultSetExtractor<Map<Integer, Film>>) rs -> {
             while (rs.next()) {
-                System.out.println("RS_NEXT");
+
                 Integer id = (rs.getInt("films.id"));
                 String name = rs.getString("films.name");
                 String description = rs.getString("description");
@@ -135,36 +99,30 @@ public class FilmDbStorage implements FilmStorage {
                 Integer duration = rs.getInt("duration");
                 Integer rate = rs.getInt("rate");
 
-                Mpa mpaRating = Mpa.builder().id(rs.getInt("mpa.id")).
-                        name(rs.getString("mpa.name")).build();
+                Mpa mpaRating = Mpa.builder().id(rs.getInt("mpa.id")).name(rs.getString("mpa.name")).build();
 
                 Film film = Film.builder().id(id).name(name).description(description).releaseDate(releaseDate)
                         .duration(duration).rate(rate).mpa(mpaRating).genres(new ArrayList<>(Collections.emptyList()))
                         .build();
 
                 films.put(id, film);
-                System.out.printf("films" + films);
             }
             return films;
         });
 
-        System.out.println("FILMS" + films);
-
         String queryGenres = "SELECT DISTINCT fg.id AS fg_id, g.id AS g_id ,g.name AS g_name FROM films_genres AS fg" +
                 " LEFT JOIN genres AS g ON g.id = fg.genre_id";
-        jdbcTemplate.query(queryGenres, (ResultSet rs) -> {
+        jdbcTemplate.query(queryGenres, (ResultSetExtractor<Map<Integer, Film>>) (ResultSet rs) -> {
             while (rs.next()) {
                 Film film = films.get(rs.getInt("fg_id"));
 
-                //if ((rs.getInt("g_id") != null) {
-                Genre genre = Genre.builder().id(rs.getInt("g_id")).name(rs.getString("g_name")).build();
+                if ((rs.getObject("g_id") != null)) {
+                    Genre genre = Genre.builder().id(rs.getInt("g_id")).name(rs.getString("g_name")).build();
 
-                System.out.println("film.getGenres()" + film.getGenres());
-                System.out.println("genre" + genre);//почему-то null, вместо списка Genre с
-                // элементом null
-                film.getGenres().add(genre);
-                //}
+                    film.getGenres().add(genre);
+                }
             }
+            return films;
         });
         Collection<Film> filmsCollection = films.values();
         return new ArrayList<>(filmsCollection);
