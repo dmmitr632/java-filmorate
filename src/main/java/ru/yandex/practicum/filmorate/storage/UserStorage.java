@@ -19,6 +19,4 @@ public interface UserStorage {
     User getUserById(@Valid int userId);
 
     void validateUser(User user);
-
-    int generateId();
 }
